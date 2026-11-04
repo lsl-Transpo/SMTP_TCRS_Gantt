@@ -1,16 +1,33 @@
 import json
+import os
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.formatting.rule import CellIsRule
 
-json_path = r"Task 6.1 - Management & Administration\schedule_data.json"
-excel_path = r"Task 6.1 - Management & Administration\SMTP_TCRS_Schedule.xlsx"
+excel_path = 'SMTP_TCRS_Schedule.xlsx'
 
-with open(json_path, "r", encoding="utf-8") as f:
-    tasks = json.load(f)
 
+def _load_tasks():
+    try:
+        from db import fetch_all_tasks
+        t = fetch_all_tasks()
+        if t:
+            print(f'Loaded {len(t)} tasks from Supabase Postgres.')
+            return t
+    except Exception as exc:
+        print(f'[warn] Supabase unavailable ({exc}), falling back to JSON...')
+    local_json = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'schedule_data.json')
+    if os.path.exists(local_json):
+        with open(local_json, 'r', encoding='utf-8') as fh:
+            t = json.load(fh)
+        print(f'Loaded {len(t)} tasks from {local_json}.')
+        return t
+    raise FileNotFoundError('No data: Supabase unreachable and schedule_data.json not found.')
+
+
+tasks = _load_tasks()
 wb = openpyxl.Workbook()
 # Remove default sheet
 wb.remove(wb.active)
