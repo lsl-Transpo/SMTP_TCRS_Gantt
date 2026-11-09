@@ -388,9 +388,9 @@ html_content = f'''<!DOCTYPE html>
 
     /* Left Pane: Hierarchical Table */
     .tree-pane {{
-      width: 480px;
-      min-width: 320px;
-      max-width: 750px;
+      width: 665px;
+      min-width: 380px;
+      max-width: 900px;
       background: #ffffff;
       border-right: 1px solid var(--border-color);
       display: flex;
@@ -412,6 +412,9 @@ html_content = f'''<!DOCTYPE html>
       text-transform: uppercase;
       letter-spacing: 0.5px;
       flex-shrink: 0;
+      width: 665px;
+      min-width: 665px;
+      overflow-x: hidden;
     }}
 
     .th-col {{
@@ -420,6 +423,8 @@ html_content = f'''<!DOCTYPE html>
       align-items: center;
       height: 100%;
       border-right: 1px solid var(--border-color);
+      flex-shrink: 0;
+      box-sizing: border-box;
     }}
 
     .tree-scroll {{
@@ -429,7 +434,8 @@ html_content = f'''<!DOCTYPE html>
     }}
 
     .tree-table {{
-      width: 100%;
+      width: 665px;
+      min-width: 665px;
       border-collapse: collapse;
       table-layout: fixed;
     }}
@@ -466,33 +472,77 @@ html_content = f'''<!DOCTYPE html>
 
     .col-wbs {{
       width: 65px;
+      min-width: 65px;
+      max-width: 65px;
       text-align: center;
       color: #64748b;
       font-size: 11px;
       font-weight: 600;
+      flex-shrink: 0;
+      box-sizing: border-box;
     }}
 
     .col-name {{
-      width: 250px;
+      width: 280px;
+      min-width: 280px;
+      max-width: 280px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex-shrink: 0;
+      box-sizing: border-box;
+    }}
+
+    .col-name-wrapper {{
       display: flex;
       align-items: center;
       gap: 6px;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
       height: var(--row-height);
+      overflow: hidden;
+      box-sizing: border-box;
+    }}
+
+    .col-name-text {{
+      flex: 1 1 0%;
+      min-width: 0;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: block;
     }}
 
     .col-type {{
       width: 105px;
+      min-width: 105px;
+      max-width: 105px;
       text-align: center;
+      flex-shrink: 0;
+      box-sizing: border-box;
     }}
 
     .col-status {{
       width: 95px;
+      min-width: 95px;
+      max-width: 95px;
       text-align: center;
+      flex-shrink: 0;
+      box-sizing: border-box;
     }}
 
     .col-assignee {{
       width: 120px;
+      min-width: 120px;
+      max-width: 120px;
       color: #475569;
+      flex-shrink: 0;
+      box-sizing: border-box;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }}
 
     .expander {{
@@ -1207,7 +1257,7 @@ html_content = f'''<!DOCTYPE html>
     <div class="tree-pane" id="tree-pane">
       <div class="pane-header">
         <div class="th-col col-wbs">WBS</div>
-        <div class="th-col col-name" style="flex:1;">Task / Deliverable Name</div>
+        <div class="th-col col-name">Task / Deliverable Name</div>
         <div class="th-col col-type">Type</div>
         <div class="th-col col-status">Status</div>
         <div class="th-col col-assignee">Assignee</div>
@@ -1595,6 +1645,10 @@ html_content = f'''<!DOCTYPE html>
 
       treeScroll.addEventListener("scroll", () => {{
         timelineScroll.scrollTop = treeScroll.scrollTop;
+        const paneHdr = document.querySelector(".pane-header");
+        if (paneHdr) {{
+          paneHdr.scrollLeft = treeScroll.scrollLeft;
+        }}
       }});
 
       // Modal Controls
@@ -1711,15 +1765,18 @@ html_content = f'''<!DOCTYPE html>
         tdWbs.textContent = t["WBS"] || "";
         tr.appendChild(tdWbs);
 
-        // Name + Expander + Indent
+        // Name + Expander + Indent (contained with set max width)
         const tdName = document.createElement("td");
         tdName.className = "col-name";
+
+        const nameWrapper = document.createElement("div");
+        nameWrapper.className = "col-name-wrapper";
 
         // Indent spacers
         for (let i = 1; i < level; i++) {{
           const sp = document.createElement("span");
           sp.className = "indent-spacer";
-          tdName.appendChild(sp);
+          nameWrapper.appendChild(sp);
         }}
 
         // Expander icon
@@ -1736,25 +1793,26 @@ html_content = f'''<!DOCTYPE html>
             }}
             render();
           }});
-          tdName.appendChild(exp);
+          nameWrapper.appendChild(exp);
         }} else {{
           const sp = document.createElement("span");
           sp.className = "indent-spacer";
-          tdName.appendChild(sp);
+          nameWrapper.appendChild(sp);
         }}
 
         // Project badge dot
         const dot = document.createElement("span");
         dot.style.cssText = `width:6px; height:6px; border-radius:50%; background:${{t["Project"] === "SMTP" ? "var(--primary-smtp)" : "var(--primary-tcrs)"}}; flex-shrink:0;`;
-        tdName.appendChild(dot);
+        nameWrapper.appendChild(dot);
 
-        // Name text
+        // Name text (strictly contained with ellipsis and full title tooltip)
         const nameSpan = document.createElement("span");
+        nameSpan.className = "col-name-text";
         nameSpan.textContent = t["Task Name"];
         nameSpan.title = t["Task Name"];
-        nameSpan.style.cssText = "overflow:hidden; text-overflow:ellipsis; white-space:nowrap;";
-        tdName.appendChild(nameSpan);
+        nameWrapper.appendChild(nameSpan);
 
+        tdName.appendChild(nameWrapper);
         tr.appendChild(tdName);
 
         // Type
