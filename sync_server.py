@@ -1,225 +1,165 @@
-"""
-sync_server.py — SMTP/TCRS Gantt live-sync server (Supabase Postgres backend).
-
-Serves:
-  GET  /                 → SMTP_TCRS_Interactive_Gantt.html
-  GET  /api/status       → health check (DB row count + Excel mtime)
-  GET  /api/schedule     → all tasks from Supabase (Gantt JSON format)
-  POST /api/schedule     → upsert tasks to Supabase AND write schedule_data.json
-                           + regenerates SMTP_TCRS_Schedule.xlsx
-
-The Gantt HTML uses these same endpoints — no code changes are needed in the
-HTML as long as it was talking to this server already.
-
-Usage:
-    python sync_server.py
-    (or double-click Start_Gantt_Chart.bat)
-"""
-
-import json
 import os
-import subprocess
 import sys
+import json
 import time
+import datetime
 import urllib.parse
-import webbrowser
 from http.server import HTTPServer, SimpleHTTPRequestHandler
-
-from db import (
-    fetch_all_tasks,
-    upsert_tasks,
-    get_connection,
-    TABLE,
-)
+import openpyxl
 
 EXCEL_FILE = "SMTP_TCRS_Schedule.xlsx"
-HTML_FILE  = "SMTP_TCRS_Interactive_Gantt.html"
-PORT       = 8080
+HTML_FILE = "SMTP_TCRS_Interactive_Gantt.html"
+PORT = 8080
 
+def read_excel_tasks():
+    if not os.path.exists(EXCEL_FILE):
+        return []
+    wb = openpyxl.load_workbook(EXCEL_FILE, data_only=True)
+    sheet_name = "All Tasks (Master)" if "All Tasks (Master)" in wb.sheetnames else wb.sheetnames[0]
+    ws = wb[sheet_name]
+    
+    headers = [cell.value for cell in ws[1]]
+    tasks = []
+    
+    for row in ws.iter_rows(min_row=2, values_only=True):
+        if not any(row):
+            continue
+        row_dict = dict(zip(headers, row))
+        
+        # Clean dates
+        def parse_d(val):
+            if val is None:
+                return ""
+            if isinstance(val, (datetime.datetime, datetime.date)):
+                return val.strftime("%Y-%m-%d")
+            s = str(val).strip()
+            if " " in s:
+                s = s.split(" ")[0]
+            return s
 
-# ── Helpers ──────────────────────────────────────────────────────────────────
+        t_name = str(row_dict.get("Task Name") or "").strip()
+        wbs = str(row_dict.get("WBS") or "").strip()
+        level = len(wbs.split(".")) if wbs else 1
 
-def _json_response(handler, data: dict, status: int = 200) -> None:
-    body = json.dumps(data, default=str).encode("utf-8")
-    handler.send_response(status)
-    handler.send_header("Content-Type", "application/json")
-    handler.end_headers()
-    handler.wfile.write(body)
+        task = {
+            "Project": str(row_dict.get("Project") or "SMTP").strip(),
+            "WBS": wbs,
+            "Task Name": t_name,
+            "Task Type": str(row_dict.get("Task Type") or "Task").strip(),
+            "Status": str(row_dict.get("Status") or "To Do").strip(),
+            "Start Date": parse_d(row_dict.get("Start Date")),
+            "Due Date": parse_d(row_dict.get("Due Date")),
+            "Assignees": str(row_dict.get("Assignees") or "").strip(),
+            "Priority": str(row_dict.get("Priority") or "Normal").strip(),
+            "Tags": str(row_dict.get("Task Order") or row_dict.get("Tags") or "").strip(),
+            "Parent Task": str(row_dict.get("Parent Task") or "").strip(),
+            "Task ID": str(row_dict.get("Task ID") or "").strip(),
+            "Parent ID": str(row_dict.get("Parent ID") or "").strip(),
+            "Description": str(row_dict.get("Description") or "").strip(),
+            "Level": level
+        }
+        tasks.append(task)
+    return tasks
 
-
-def read_db_tasks() -> list[dict]:
-    """Return all tasks from Supabase, ordered by project + WBS."""
-    return fetch_all_tasks(order_by_wbs=True)
-
-
-def save_db_tasks(tasks: list[dict]) -> int:
-    """
-    Upsert tasks to Supabase.
-    Also writes schedule_data.json as a local backup,
-    then regenerates SMTP_TCRS_Schedule.xlsx.
-    Returns the count of upserted rows.
-    """
-    n = upsert_tasks(tasks)
-
-    # Keep local JSON in sync as a backup / offline fallback
-    _write_json_backup(tasks)
-
-    # Regenerate Excel
-    _regenerate_excel()
-
-    return n
-
-
-def _write_json_backup(tasks: list[dict]) -> None:
-    """Overwrite schedule_data.json with the full current task list from DB."""
-    try:
-        with open("schedule_data.json", "w", encoding="utf-8") as f:
-            json.dump(tasks, f, indent=2, ensure_ascii=False)
-    except Exception as exc:
-        print(f"[warn] Could not write schedule_data.json: {exc}")
-
-
-def _regenerate_excel() -> None:
-    """Run create_excel_schedule.py to regenerate the .xlsx file."""
-    script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "create_excel_schedule.py")
-    if os.path.exists(script):
-        try:
-            subprocess.run([sys.executable, script], check=True, timeout=120)
-        except Exception as exc:
-            print(f"[warn] Excel regeneration failed: {exc}")
-    else:
-        print("[warn] create_excel_schedule.py not found — skipping Excel update")
-
-
-def _db_row_count() -> int:
-    try:
-        conn = get_connection()
-        with conn.cursor() as cur:
-            cur.execute(f"SELECT COUNT(*) FROM {TABLE};")
-            (n,) = cur.fetchone()
-        conn.close()
-        return n
-    except Exception:
-        return -1
-
-
-# ── HTTP Handler ─────────────────────────────────────────────────────────────
+def save_excel_tasks(new_tasks):
+    # Call the existing generation script logic to update SMTP_TCRS_Schedule.xlsx cleanly
+    from create_excel_schedule import add_schedule_sheet, wb, NAVY_FILL, SMTP_FILL, TCRS_FILL
+    import create_excel_schedule
+    # Save JSON data first
+    with open("schedule_data.json", "w", encoding="utf-8") as f:
+        json.dump(new_tasks, f, indent=2)
+    # Re-run generator
+    os.system(f'python "{os.path.join(os.path.dirname(__file__), "create_excel_schedule.py")}"')
+    return True
 
 class GanttSyncHandler(SimpleHTTPRequestHandler):
-    # ── CORS headers on every response ────────────────────────────────────
     def end_headers(self):
-        self.send_header("Access-Control-Allow-Origin",  "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        # Enable CORS
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         super().end_headers()
 
     def do_OPTIONS(self):
         self.send_response(200)
         self.end_headers()
 
-    def log_message(self, fmt, *args):
-        # Suppress noisy static-file log entries; keep API entries
-        path = args[0] if args else ""
-        if "/api/" in str(path):
-            super().log_message(fmt, *args)
-
-    # ── GET ───────────────────────────────────────────────────────────────
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
-        path   = parsed.path
-
-        if path == "/api/status":
-            count = _db_row_count()
+        if parsed.path == "/api/status":
             mtime = os.path.getmtime(EXCEL_FILE) if os.path.exists(EXCEL_FILE) else 0
-            _json_response(self, {
-                "status": "ok",
-                "task_count": count,
-                "excel_mtime": mtime,
-                "port": PORT,
-                "backend": "supabase-postgres",
-            })
-
-        elif path == "/api/schedule":
-            try:
-                tasks = read_db_tasks()
-                mtime = os.path.getmtime(EXCEL_FILE) if os.path.exists(EXCEL_FILE) else 0
-                _json_response(self, {"tasks": tasks, "mtime": mtime, "count": len(tasks)})
-            except Exception as exc:
-                _json_response(self, {"error": str(exc)}, 500)
-
-        elif path in ("/", ""):
+            res = {"status": "ok", "excel_mtime": mtime, "port": PORT}
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps(res).encode("utf-8"))
+            return
+        elif parsed.path == "/api/schedule":
+            tasks = read_excel_tasks()
+            mtime = os.path.getmtime(EXCEL_FILE) if os.path.exists(EXCEL_FILE) else 0
+            res = {"tasks": tasks, "mtime": mtime}
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps(res).encode("utf-8"))
+            return
+        elif parsed.path in ("/", ""):
             self.path = "/" + HTML_FILE
-            super().do_GET()
-
+            return super().do_GET()
         else:
-            super().do_GET()
+            return super().do_GET()
 
-    # ── POST ──────────────────────────────────────────────────────────────
     def do_POST(self):
         parsed = urllib.parse.urlparse(self.path)
-        path   = parsed.path
-
-        if path == "/api/schedule":
+        if parsed.path == "/api/schedule":
+            content_length = int(self.headers.get('Content-Length', 0))
+            post_data = self.rfile.read(content_length)
             try:
-                length   = int(self.headers.get("Content-Length", 0))
-                raw_body = self.rfile.read(length)
-                data     = json.loads(raw_body.decode("utf-8"))
-                tasks    = data.get("tasks", [])
-
-                if not tasks:
-                    _json_response(self, {"error": "No tasks in request body"}, 400)
+                data = json.loads(post_data.decode('utf-8'))
+                tasks_list = data.get("tasks", [])
+                if tasks_list:
+                    # Update JSON and Excel
+                    with open("schedule_data.json", "w", encoding="utf-8") as f:
+                        json.dump(tasks_list, f, indent=2)
+                    
+                    import subprocess
+                    script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "create_excel_schedule.py")
+                    subprocess.run([sys.executable, script_path], check=True)
+                    
+                    mtime = os.path.getmtime(EXCEL_FILE)
+                    res = {"success": True, "count": len(tasks_list), "mtime": mtime}
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/json")
+                    self.end_headers()
+                    self.wfile.write(json.dumps(res).encode("utf-8"))
                     return
-
-                n = save_db_tasks(tasks)
-                mtime = os.path.getmtime(EXCEL_FILE) if os.path.exists(EXCEL_FILE) else 0
-                _json_response(self, {
-                    "success": True,
-                    "upserted": n,
-                    "count": len(tasks),
-                    "mtime": mtime,
-                })
-
-            except Exception as exc:
-                _json_response(self, {"error": str(exc)}, 500)
-        else:
-            self.send_response(404)
-            self.end_headers()
-
-
-# ── Server startup ───────────────────────────────────────────────────────────
+            except Exception as e:
+                self.send_response(500)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode("utf-8"))
+                return
 
 def run_server():
-    # Always run from the script's directory so static file serving works
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
-
-    # Verify DB connectivity before opening the browser
-    print("Checking Supabase connection…", end=" ", flush=True)
-    count = _db_row_count()
-    if count >= 0:
-        print(f"✓  ({count} tasks in database)")
-    else:
-        print("⚠  Could not reach Supabase — check .env and network")
-
-    httpd = HTTPServer(("", PORT), GanttSyncHandler)
-
-    print("=" * 62)
-    print(" WSDOT SMTP & TCRS Gantt Chart Live Sync Server Running")
-    print(f" URL:          http://localhost:{PORT}")
-    print(f" Backend:      Supabase Postgres  ({TABLE})")
-    print(f" Excel target: {os.path.abspath(EXCEL_FILE)}")
-    print("=" * 62)
-
+    server_address = ('', PORT)
+    httpd = HTTPServer(server_address, GanttSyncHandler)
+    print(f"============================================================")
+    print(f" WSDOT SMTP & TCRS Gantt Chart Live Sync Server Running")
+    print(f" URL: http://localhost:{PORT}")
+    print(f" Excel Target: {os.path.abspath(EXCEL_FILE)}")
+    print(f"============================================================")
     try:
+        import webbrowser
         webbrowser.open(f"http://localhost:{PORT}")
     except Exception:
         pass
-
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
         print("\nShutting down server.")
         httpd.server_close()
 
-
 if __name__ == "__main__":
     run_server()
+
