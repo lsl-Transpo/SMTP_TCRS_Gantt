@@ -414,8 +414,24 @@
 
     .tree-scroll {
       flex: 1;
-      overflow-y: hidden; /* Synced with timeline scroll */
+      overflow-y: auto;
       overflow-x: auto;
+      scrollbar-width: thin;
+    }
+
+    /* Hide redundant vertical scrollbar on left tree pane so only right timeline scrollbar shows, but keep full native scrolling */
+    .tree-scroll::-webkit-scrollbar:vertical {
+      width: 0px;
+      display: none;
+    }
+
+    .tree-scroll::-webkit-scrollbar:horizontal {
+      height: 6px;
+    }
+
+    .tree-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
     }
 
     .tree-table {
@@ -4697,23 +4713,84 @@
       // Resizer Dragging
       initResizer();
 
-      // Synchronize Table and Timeline Vertical Scroll
+      // Synchronize Table and Timeline Scroll (handles scrolling to the left or right of the resizer)
       const treeScroll = document.getElementById("tree-scroll");
       const timelineScroll = document.getElementById("timeline-body-scroll");
       const headerScroll = document.getElementById("timeline-header-container");
+      const treePane = document.getElementById("tree-pane");
+      const paneHeader = document.querySelector(".pane-header");
+      const resizerEl = document.getElementById("resizer");
 
+      let isSyncingFromTimeline = false;
+      let isSyncingFromTree = false;
+
+      // Scrolling on the RIGHT of the resizer (Timeline)
       timelineScroll.addEventListener("scroll", () => {
-        treeScroll.scrollTop = timelineScroll.scrollTop;
-        headerScroll.scrollLeft = timelineScroll.scrollLeft;
-      });
-
-      treeScroll.addEventListener("scroll", () => {
-        timelineScroll.scrollTop = treeScroll.scrollTop;
-        const paneHdr = document.querySelector(".pane-header");
-        if (paneHdr) {
-          paneHdr.scrollLeft = treeScroll.scrollLeft;
+        if (!isSyncingFromTree) {
+          isSyncingFromTimeline = true;
+          treeScroll.scrollTop = timelineScroll.scrollTop;
+          requestAnimationFrame(() => { isSyncingFromTimeline = false; });
         }
-      });
+        headerScroll.scrollLeft = timelineScroll.scrollLeft;
+      }, { passive: true });
+
+      // Scrolling on the LEFT of the resizer (Task Tree Table)
+      treeScroll.addEventListener("scroll", () => {
+        if (!isSyncingFromTimeline) {
+          isSyncingFromTree = true;
+          timelineScroll.scrollTop = treeScroll.scrollTop;
+          requestAnimationFrame(() => { isSyncingFromTree = false; });
+        }
+        if (paneHeader) {
+          paneHeader.scrollLeft = treeScroll.scrollLeft;
+        }
+      }, { passive: true });
+
+      // Wheel scrolling on the LEFT of the resizer (tree-pane and header)
+      if (treePane) {
+        treePane.addEventListener("wheel", (e) => {
+          if (e.shiftKey) {
+            // Horizontal scroll with Shift + Wheel on left pane
+            treeScroll.scrollLeft += e.deltaY;
+            if (paneHeader) paneHeader.scrollLeft = treeScroll.scrollLeft;
+            e.preventDefault();
+          } else if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+            // Vertical scroll: scroll both left and right panes in lockstep
+            timelineScroll.scrollTop += e.deltaY;
+            treeScroll.scrollTop = timelineScroll.scrollTop;
+          } else if (e.deltaX) {
+            treeScroll.scrollLeft += e.deltaX;
+            if (paneHeader) paneHeader.scrollLeft = treeScroll.scrollLeft;
+          }
+        }, { passive: false });
+      }
+
+      // Wheel scrolling on the resizer splitter bar
+      if (resizerEl) {
+        resizerEl.addEventListener("wheel", (e) => {
+          if (e.deltaY) {
+            timelineScroll.scrollTop += e.deltaY;
+            treeScroll.scrollTop = timelineScroll.scrollTop;
+            e.preventDefault();
+          }
+        }, { passive: false });
+      }
+
+      // Wheel scrolling on Timeline Header
+      if (headerScroll) {
+        headerScroll.addEventListener("wheel", (e) => {
+          if (e.shiftKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+            const delta = e.deltaX || e.deltaY;
+            timelineScroll.scrollLeft += delta;
+            headerScroll.scrollLeft = timelineScroll.scrollLeft;
+            e.preventDefault();
+          } else if (e.deltaY) {
+            timelineScroll.scrollTop += e.deltaY;
+            treeScroll.scrollTop = timelineScroll.scrollTop;
+            e.preventDefault();
+          }
+        }, { passive: false });
+      }
 
       // Modal Controls
       document.getElementById("modal-close").addEventListener("click", closeModal);
