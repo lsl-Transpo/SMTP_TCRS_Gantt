@@ -4721,6 +4721,10 @@
       document.getElementById("btn-modal-save").addEventListener("click", saveTaskModal);
       document.getElementById("btn-delete-task").addEventListener("click", deleteTaskModal);
       document.getElementById("btn-add-task").addEventListener("click", () => openTaskModal(null));
+      document.getElementById("edit-project").addEventListener("change", (e) => {
+        const currentTaskId = document.getElementById("edit-task-id").value;
+        populateParentOptions(e.target.value, currentTaskId, "");
+      });
 
       // Unscheduled modal
       document.getElementById("unscheduled-pill").addEventListener("click", openUnscheduledModal);
@@ -5236,29 +5240,44 @@
     }
 
     // Modal Operations
-    function openTaskModal(tid) {
-      const modal = document.getElementById("task-modal");
+    function populateParentOptions(project, currentTaskId, selectedParentId) {
       const parentSelect = document.getElementById("edit-parent-id");
+      const currentVal = selectedParentId !== undefined ? selectedParentId : parentSelect.value;
       parentSelect.innerHTML = '<option value="">(None - Top Level Task)</option>';
 
-      // Populate possible parents
-      tasks.forEach(t => {
-        if (t["Task ID"] !== tid && (!t["Level"] || t["Level"] < 3)) {
-          const opt = document.createElement("option");
-          opt.value = t["Task ID"];
-          opt.textContent = `[${t["Project"]}] ${t["Task Name"]}`;
-          parentSelect.appendChild(opt);
-        }
+      // Filter tasks strictly by the selected project so only that project's parents appear
+      const eligibleParents = tasks.filter(t => {
+        const tProj = t["Project"] || "SMTP";
+        if (tProj !== project) return false;
+        if (t["Task ID"] === currentTaskId) return false;
+        const isExistingParent = currentVal && t["Task ID"] === currentVal;
+        const isEligibleLevel = !t["Level"] || t["Level"] < 3;
+        return isEligibleLevel || isExistingParent;
       });
+
+      eligibleParents.forEach(t => {
+        const opt = document.createElement("option");
+        opt.value = t["Task ID"];
+        const wbs = t["WBS"] ? `${t["WBS"]} - ` : "";
+        opt.textContent = `${wbs}${t["Task Name"]}`;
+        parentSelect.appendChild(opt);
+      });
+
+      parentSelect.value = currentVal || "";
+    }
+
+    function openTaskModal(tid) {
+      const modal = document.getElementById("task-modal");
 
       if (tid) {
         // Edit existing
         const task = tasks.find(t => (t["Task ID"] || t.id) === tid);
         if (!task) return;
+        const project = task["Project"] || "SMTP";
         document.getElementById("modal-title").textContent = "Edit Task Details";
         document.getElementById("edit-task-id").value = tid;
-        document.getElementById("edit-project").value = task["Project"] || "SMTP";
-        document.getElementById("edit-parent-id").value = task["Parent ID"] || "";
+        document.getElementById("edit-project").value = project;
+        populateParentOptions(project, tid, task["Parent ID"] || "");
         document.getElementById("edit-task-name").value = task["Task Name"] || "";
         document.getElementById("edit-task-type").value = task["Task Type"] || "Task";
         document.getElementById("edit-status").value = task["Status"] || "To Do";
@@ -5271,10 +5290,11 @@
         document.getElementById("btn-delete-task").style.display = "inline-flex";
       } else {
         // Create new
+        const defaultProject = activeProject === "ALL" ? "SMTP" : activeProject;
         document.getElementById("modal-title").textContent = "Add New Schedule Item";
         document.getElementById("edit-task-id").value = "";
-        document.getElementById("edit-project").value = activeProject === "ALL" ? "SMTP" : activeProject;
-        document.getElementById("edit-parent-id").value = "";
+        document.getElementById("edit-project").value = defaultProject;
+        populateParentOptions(defaultProject, "", "");
         document.getElementById("edit-task-name").value = "";
         document.getElementById("edit-task-type").value = "Task";
         document.getElementById("edit-status").value = "To Do";
@@ -5306,8 +5326,11 @@
         // Update
         const task = tasks.find(t => (t["Task ID"] || t.id) === tid);
         if (task) {
+          const parentId = document.getElementById("edit-parent-id").value;
+          const parentTaskObj = tasks.find(t => t["Task ID"] === parentId);
           task["Project"] = document.getElementById("edit-project").value;
-          task["Parent ID"] = document.getElementById("edit-parent-id").value;
+          task["Parent ID"] = parentId;
+          task["Parent Task"] = parentTaskObj ? parentTaskObj["Task Name"] : "";
           task["Task Name"] = name;
           task["Task Type"] = document.getElementById("edit-task-type").value;
           task["Status"] = document.getElementById("edit-status").value;
@@ -5320,11 +5343,14 @@
         }
       } else {
         // New task
+        const parentId = document.getElementById("edit-parent-id").value;
+        const parentTaskObj = tasks.find(t => t["Task ID"] === parentId);
         const newId = "task_" + Date.now().toString(36);
         const newTask = {
           "Project": document.getElementById("edit-project").value,
           "Task ID": newId,
-          "Parent ID": document.getElementById("edit-parent-id").value,
+          "Parent ID": parentId,
+          "Parent Task": parentTaskObj ? parentTaskObj["Task Name"] : "",
           "Task Name": name,
           "Task Type": document.getElementById("edit-task-type").value,
           "Status": document.getElementById("edit-status").value,
