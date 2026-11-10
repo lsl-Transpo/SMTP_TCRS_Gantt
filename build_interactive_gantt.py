@@ -1348,9 +1348,9 @@ html_content = f'''<!DOCTYPE html>
             </select>
           </div>
           <div class="form-group" style="flex:1;">
-            <label>Parent Task</label>
+            <label>Assigned Under (Task / Subtask)</label>
             <select class="form-control" id="edit-parent-id">
-              <option value="">(None - Top Level Task)</option>
+              <option value="">Select an existing Task (x.x) or Subtask (x.x.x)</option>
             </select>
           </div>
         </div>
@@ -2253,24 +2253,106 @@ html_content = f'''<!DOCTYPE html>
     }}
 
     // Modal Operations
+    function getTaskId(task) {{
+      return task["Task ID"] || task.id;
+    }}
+
+    function getTaskParentId(task) {{
+      return task["Parent ID"] || task.parent_id || "";
+    }}
+
+    function compareWbs(a, b) {{
+      const aParts = String(a["WBS"] || "").split(".").map(Number);
+      const bParts = String(b["WBS"] || "").split(".").map(Number);
+      if (!a["WBS"]) return b["WBS"] ? 1 : 0;
+      if (!b["WBS"]) return -1;
+      for (let i = 0; i < Math.min(aParts.length, bParts.length); i++) {{
+        if (aParts[i] !== bParts[i]) return aParts[i] - bParts[i];
+      }}
+      return aParts.length - bParts.length;
+    }}
+
+    function rebuildWbsAndSortTasks() {{
+      const originalOrder = new Map(tasks.map((task, index) => [getTaskId(task), index]));
+      const projects = [...new Set(tasks.map(task => task["Project"] || "SMTP"))];
+      const orderedTasks = [];
+
+      projects.forEach(project => {{
+        const projectTasks = tasks.filter(task => (task["Project"] || "SMTP") === project);
+        const projectIds = new Set(projectTasks.map(getTaskId));
+        const children = new Map();
+        projectTasks.forEach(task => {{
+          const parentId = getTaskParentId(task);
+          if (parentId && projectIds.has(parentId)) {{
+            if (!children.has(parentId)) children.set(parentId, []);
+            children.get(parentId).push(task);
+          }}
+        }});
+
+        const sortSiblings = list => list.sort((a, b) =>
+          compareWbs(a, b) || originalOrder.get(getTaskId(a)) - originalOrder.get(getTaskId(b))
+        );
+        const visited = new Set();
+        const visit = (task, wbs) => {{
+          const id = getTaskId(task);
+          if (visited.has(id)) return;
+          visited.add(id);
+          task["WBS"] = wbs;
+          task["Level"] = wbs.split(".").length;
+          const parent = projectTasks.find(candidate => getTaskId(candidate) === getTaskParentId(task));
+          task["Parent Task"] = parent ? parent["Task Name"] : "";
+          orderedTasks.push(task);
+          const childTasks = sortSiblings(children.get(id) || []);
+          childTasks.forEach((child, index) => visit(child, `${{wbs}}.${{index + 1}}`));
+        }};
+
+        const roots = sortSiblings(projectTasks.filter(task => {{
+          const parentId = getTaskParentId(task);
+          return !parentId || !projectIds.has(parentId);
+        }}));
+        roots.forEach((root, index) => visit(root, String(index + 1)));
+        projectTasks.forEach(task => {{
+          if (!visited.has(getTaskId(task))) visit(task, String(roots.length + 1));
+        }});
+      }});
+
+      tasks = orderedTasks;
+    }}
+
+    function isTaskDescendant(candidateId, ancestorId) {{
+      let current = tasks.find(task => getTaskId(task) === candidateId);
+      const visited = new Set();
+      while (current) {{
+        const parentId = getTaskParentId(current);
+        if (!parentId || visited.has(parentId)) return false;
+        if (parentId === ancestorId) return true;
+        visited.add(parentId);
+        current = tasks.find(task => getTaskId(task) === parentId);
+      }}
+      return false;
+    }}
+
     function populateParentOptions(project, currentTaskId, selectedParentId) {{
       const parentSelect = document.getElementById("edit-parent-id");
       const currentVal = selectedParentId !== undefined ? selectedParentId : parentSelect.value;
-      parentSelect.innerHTML = '<option value="">(None - Top Level Task)</option>';
+      parentSelect.innerHTML = currentTaskId
+        ? '<option value="">(No Parent - Top Level Task)</option>'
+        : '<option value="">Select an existing Task (x.x) or Subtask (x.x.x)</option>';
 
-      // Filter tasks strictly by the selected project so only that project's parents appear
       const eligibleParents = tasks.filter(t => {{
         const tProj = t["Project"] || "SMTP";
         if (tProj !== project) return false;
-        if (t["Task ID"] === currentTaskId) return false;
-        const isExistingParent = currentVal && t["Task ID"] === currentVal;
-        const isEligibleLevel = !t["Level"] || t["Level"] < 3;
+        const taskId = getTaskId(t);
+        if (taskId === currentTaskId || (currentTaskId && isTaskDescendant(taskId, currentTaskId))) return false;
+        const level = Number(t["Level"]) || String(t["WBS"] || "").split(".").filter(Boolean).length;
+        const isExistingParent = currentVal && taskId === currentVal;
+        const isEligibleLevel = level === 2 || level === 3;
         return isEligibleLevel || isExistingParent;
       }});
 
       eligibleParents.forEach(t => {{
         const opt = document.createElement("option");
-        opt.value = t["Task ID"];
+        opt.value = getTaskId(t);
         const wbs = t["WBS"] ? `${{t["WBS"]}} - ` : "";
         opt.textContent = `${{wbs}}${{t["Task Name"]}}`;
         parentSelect.appendChild(opt);
@@ -2330,20 +2412,32 @@ html_content = f'''<!DOCTYPE html>
     function saveTaskModal() {{
       const tid = document.getElementById("edit-task-id").value;
       const name = document.getElementById("edit-task-name").value.trim();
+      const project = document.getElementById("edit-project").value;
+      const parentId = document.getElementById("edit-parent-id").value;
       if (!name) {{
         alert("Please enter a task name.");
         return;
+      }}
+
+      if (!tid) {{
+        const parent = tasks.find(task => getTaskId(task) === parentId && (task["Project"] || "SMTP") === project);
+        const level = parent && (Number(parent["Level"]) || String(parent["WBS"] || "").split(".").filter(Boolean).length);
+        if (!parent || (level !== 2 && level !== 3)) {{
+          alert("Select an existing Task (x.x) or Subtask (x.x.x) to assign this item under.");
+          return;
+        }}
       }}
 
       if (tid) {{
         // Update
         const task = tasks.find(t => (t["Task ID"] || t.id) === tid);
         if (task) {{
-          const parentId = document.getElementById("edit-parent-id").value;
-          const parentTaskObj = tasks.find(t => t["Task ID"] === parentId);
-          task["Project"] = document.getElementById("edit-project").value;
+          const previousParentId = getTaskParentId(task);
+          const parentTaskObj = tasks.find(t => getTaskId(t) === parentId);
+          task["Project"] = project;
           task["Parent ID"] = parentId;
           task["Parent Task"] = parentTaskObj ? parentTaskObj["Task Name"] : "";
+          if (previousParentId !== parentId) task["WBS"] = "";
           task["Task Name"] = name;
           task["Task Type"] = document.getElementById("edit-task-type").value;
           task["Status"] = document.getElementById("edit-status").value;
@@ -2356,11 +2450,10 @@ html_content = f'''<!DOCTYPE html>
         }}
       }} else {{
         // New task
-        const parentId = document.getElementById("edit-parent-id").value;
-        const parentTaskObj = tasks.find(t => t["Task ID"] === parentId);
+        const parentTaskObj = tasks.find(t => getTaskId(t) === parentId);
         const newId = "task_" + Date.now().toString(36);
         const newTask = {{
-          "Project": document.getElementById("edit-project").value,
+          "Project": project,
           "Task ID": newId,
           "Parent ID": parentId,
           "Parent Task": parentTaskObj ? parentTaskObj["Task Name"] : "",
@@ -2373,12 +2466,13 @@ html_content = f'''<!DOCTYPE html>
           "Assignees": document.getElementById("edit-assignees").value,
           "Tags": document.getElementById("edit-tags").value,
           "Description": document.getElementById("edit-description").value,
-          "Level": 2,
-          "WBS": "New"
+          "Level": 0,
+          "WBS": ""
         }};
         tasks.push(newTask);
       }}
 
+      rebuildWbsAndSortTasks();
       saveTasks();
       closeModal();
       render();
@@ -2648,9 +2742,13 @@ html_content = f'''<!DOCTYPE html>
       const wb = XLSX.utils.book_new();
 
       function formatSheetData(taskList) {{
-        return taskList.map(t => ({{
+        return taskList.map(t => {{
+          const wbsParts = String(t["WBS"] || "").split(".").filter(Boolean);
+          return {{
           "Project": t["Project"],
           "WBS": t["WBS"] || "",
+          "Task": wbsParts.length >= 2 ? wbsParts.slice(0, 2).join(".") : "",
+          "Subtask": wbsParts.length >= 3 ? wbsParts.join(".") : "",
           "Task Name": t["Task Name"],
           "Task Type": t["Task Type"],
           "Status": t["Status"],
@@ -2663,7 +2761,8 @@ html_content = f'''<!DOCTYPE html>
           "Task ID": t["Task ID"],
           "Parent ID": t["Parent ID"],
           "Description": t["Description"]
-        }}));
+          }};
+        }});
       }}
 
       // 1. Master sheet
@@ -2686,13 +2785,16 @@ html_content = f'''<!DOCTYPE html>
 
     // Export to CSV
     function exportCSV() {{
-      const headers = ["Project", "WBS", "Task Name", "Task Type", "Status", "Start Date", "Due Date", "Assignees", "Priority", "Tags", "Parent Task", "Task ID", "Parent ID", "Description"];
+      const headers = ["Project", "WBS", "Task", "Subtask", "Task Name", "Task Type", "Status", "Start Date", "Due Date", "Assignees", "Priority", "Tags", "Parent Task", "Task ID", "Parent ID", "Description"];
       let csv = headers.join(",") + "\\n";
 
       tasks.forEach(t => {{
+        const wbsParts = String(t["WBS"] || "").split(".").filter(Boolean);
         const row = [
           t["Project"],
           `"${{t["WBS"] || ""}}"`,
+          wbsParts.length >= 2 ? wbsParts.slice(0, 2).join(".") : "",
+          wbsParts.length >= 3 ? wbsParts.join(".") : "",
           `"${{(t["Task Name"] || "").replace(/"/g, '""')}}"`,
           t["Task Type"],
           t["Status"],

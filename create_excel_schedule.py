@@ -51,6 +51,8 @@ COLUMNS = [
     ("Task ID", 12, ALIGN_CENTER),
     ("Parent ID", 12, ALIGN_CENTER),
     ("Description", 45, ALIGN_LEFT),
+    ("Task", 12, ALIGN_CENTER),
+    ("Subtask", 14, ALIGN_CENTER),
 ]
 
 def add_schedule_sheet(sheet_title, task_list, header_fill):
@@ -93,7 +95,9 @@ def add_schedule_sheet(sheet_title, task_list, header_fill):
             t.get("Parent Task", ""),
             t.get("Task ID", ""),
             t.get("Parent ID", ""),
-            t.get("Description", "")
+            t.get("Description", ""),
+            ".".join(str(t.get("WBS", "")).split(".")[:2]) if len(str(t.get("WBS", "")).split(".")) >= 2 else "",
+            str(t.get("WBS", "")) if len(str(t.get("WBS", "")).split(".")) >= 3 else "",
         ]
         
         for col_idx, val in enumerate(row_data, start=1):
