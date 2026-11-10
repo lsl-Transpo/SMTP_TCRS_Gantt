@@ -1,8 +1,9 @@
 import json
 import os
 
-json_path = r"Task 6.1 - Management & Administration\schedule_data.json"
-html_path = r"Task 6.1 - Management & Administration\SMTP_TCRS_Interactive_Gantt.html"
+base_dir = os.path.dirname(os.path.abspath(__file__))
+json_path = os.path.join(base_dir, "schedule_data.json")
+html_path = os.path.join(base_dir, "index.html")
 
 with open(json_path, "r", encoding="utf-8") as f:
     tasks = json.load(f)
@@ -2845,6 +2846,6 @@ html_content = f'''<!DOCTYPE html>
 '''
 
 with open(html_path, "w", encoding="utf-8") as f:
-    f.write(html_content)
+  f.write("\n".join(line.rstrip() for line in html_content.splitlines()) + "\n")
 
 print(f"Generated {html_path} successfully (size: {os.path.getsize(html_path)} bytes)")

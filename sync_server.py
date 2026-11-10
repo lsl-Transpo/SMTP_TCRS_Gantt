@@ -8,7 +8,7 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 import openpyxl
 
 EXCEL_FILE = "SMTP_TCRS_Schedule.xlsx"
-HTML_FILE = "SMTP_TCRS_Interactive_Gantt.html"
+HTML_FILE = "index.html"
 PORT = 8080
 
 def read_excel_tasks():

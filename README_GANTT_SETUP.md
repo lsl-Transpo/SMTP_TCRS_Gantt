@@ -11,7 +11,7 @@ It provides a seamless **dual-update workflow**: team members can update project
 | File | Purpose |
 | :--- | :--- |
 | **`SMTP_TCRS_Schedule.xlsx`** | The master formatted Excel workbook for team collaboration on OneDrive. Contains **Dashboard & Summary**, **All Tasks (Master)**, **SMTP Tasks**, and **TCRS Tasks** with dropdowns and conditional formatting. |
-| **`SMTP_TCRS_Interactive_Gantt.html`** | The standalone interactive web-based Gantt chart. Zero-install, opens in any web browser (Chrome, Edge). Supports drag-and-drop rescheduling, filtering, editing, and Excel import/export. |
+| **`index.html`** | The generated standalone interactive web-based Gantt chart. Zero-install, opens in any web browser (Chrome, Edge). Supports drag-and-drop rescheduling, filtering, editing, and Excel import/export. |
 | **`Start_Gantt_Chart.bat`** | **1-click launcher** for Windows. Double-click this to automatically start the two-way live disk sync server and open the Gantt chart in your browser. |
 | **`sync_server.py`** | Lightweight background server that monitors `SMTP_TCRS_Schedule.xlsx` and keeps the web interface and Excel file in real-time two-way synchronization. |
 | **`schedule_data.json`** | Cleaned and structured JSON database of all 171 tasks, deliverables, milestones, decision points, and regional outreach events. |
@@ -29,7 +29,7 @@ You can choose either of two ways to update the schedule:
 4. If you have the interactive Gantt chart open, you can simply **drag and drop** the updated `.xlsx` file onto the browser window, or click **"📂 Load File"** to refresh it immediately.
 
 ### Option B: Update via the Interactive Gantt Chart
-1. **Double-click [`Start_Gantt_Chart.bat`](file:///c:/Users/leslie.langley/OneDrive%20-%20Transpo%20Group/WSDOT%20SMTP%20&%20CRS%20-%20General/Task%206%20-%20Carbon%20Reduction%20Strategy%20Update/Task%206.1%20-%20Management%20&%20Administration/Start_Gantt_Chart.bat)** (or open [`SMTP_TCRS_Interactive_Gantt.html`](file:///c:/Users/leslie.langley/OneDrive%20-%20Transpo%20Group/WSDOT%20SMTP%20&%20CRS%20-%20General/Task%206%20-%20Carbon%20Reduction%20Strategy%20Update/Task%206.1%20-%20Management%20&%20Administration/SMTP_TCRS_Interactive_Gantt.html) in your browser).
+1. **Double-click [`Start_Gantt_Chart.bat`](Start_Gantt_Chart.bat)** (or open [`index.html`](index.html) in your browser).
 2. **Interactive Controls**:
    - **Switch Projects**: Click `All Projects`, `SMTP`, or `TCRS` in the top bar.
    - **Reschedule**: Click and drag any timeline bar left/right to adjust dates, or drag the bar edges to adjust duration.

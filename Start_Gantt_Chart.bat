@@ -17,7 +17,7 @@ if %ERRORLEVEL% EQU 0 (
     python sync_server.py
 ) else (
     echo Python not found in PATH. Opening standalone Gantt Chart in browser...
-    start "" "%~dp0SMTP_TCRS_Interactive_Gantt.html"
+    start "" "%~dp0index.html"
 )
 pause
 
