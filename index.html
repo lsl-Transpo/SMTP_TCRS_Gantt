@@ -1307,7 +1307,7 @@
     </div>
     <div style="display:flex; align-items:center; gap:12px;">
       <span>💡 Drag bars to reschedule • Click any task to edit details • Drag & drop .xlsx files here to load</span>
-      <button class="btn btn-light" id="btn-reset-data" style="padding:2px 8px; font-size:11px;">Reset to Original Data</button>
+      <button class="btn btn-light" id="btn-show-baseline" style="padding:2px 8px; font-size:11px;" title="Show the original baseline timeline">Show Baseline Timeline</button>
     </div>
   </footer>
 
@@ -4520,12 +4520,20 @@
 
     // State
     let tasks = [];
+    let showingBaselineTimeline = false;
     let activeProject = "ALL"; // "ALL", "SMTP", "TCRS"
     let currentZoom = "month"; // "quarter", "month", "week"
     let collapsedSet = new Set(); // set of parent Task IDs currently collapsed
     let selectedTaskId = null;
     let serverSyncEnabled = false;
     let lastKnownServerMtime = 0;
+
+    function updateBaselineButton() {
+      const btn = document.getElementById("btn-show-baseline");
+      if (!btn) return;
+      btn.textContent = showingBaselineTimeline ? "Show Current Timeline" : "Show Baseline Timeline";
+      btn.title = showingBaselineTimeline ? "Return to the current schedule" : "Show the original baseline timeline";
+    }
 
     // Zoom scale configuration (pixels per day)
     const ZOOM_CONFIG = {
@@ -4537,7 +4545,7 @@
     // Project timeline bounds: May 1, 2026 to Dec 31, 2027
     const TIMELINE_START = new Date("2026-04-15T00:00:00");
     const TIMELINE_END = new Date("2028-01-15T00:00:00");
-    const TODAY = new Date("2026-11-03T00:00:00"); // Matches project current context
+    const TODAY = new Date(); // Tracks the actual current date
 
     // Initialize application
     async function init() {
@@ -4808,14 +4816,32 @@
       document.getElementById("unscheduled-close").addEventListener("click", closeUnscheduledModal);
       document.getElementById("unscheduled-ok").addEventListener("click", closeUnscheduledModal);
 
-      // Reset Data
-      document.getElementById("btn-reset-data").addEventListener("click", () => {
-        if (confirm("Reset all schedule modifications back to the original baseline?")) {
-          localStorage.removeItem("smtp_tcrs_schedule_data");
-          tasks = JSON.parse(JSON.stringify(BASELINE_TASKS));
+      // Baseline Timeline Toggle
+      document.getElementById("btn-show-baseline").addEventListener("click", () => {
+        if (showingBaselineTimeline) {
+          showingBaselineTimeline = false;
+          const saved = localStorage.getItem("smtp_tcrs_schedule_data");
+          if (saved) {
+            try {
+              tasks = JSON.parse(saved);
+            } catch (e) {
+              console.error("Error reading saved tasks", e);
+              tasks = JSON.parse(JSON.stringify(BASELINE_TASKS));
+            }
+          } else {
+            tasks = JSON.parse(JSON.stringify(BASELINE_TASKS));
+          }
           render();
-          showToast("Reset to baseline schedule!");
+          updateBaselineButton();
+          showToast("Showing current schedule");
+          return;
         }
+
+        showingBaselineTimeline = true;
+        tasks = JSON.parse(JSON.stringify(BASELINE_TASKS));
+        render();
+        updateBaselineButton();
+        showToast("Showing baseline timeline");
       });
 
       // File Import / Export
