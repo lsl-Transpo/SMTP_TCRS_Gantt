@@ -8,8 +8,10 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
     :root {
+      --brand-primary: #176b58;
+      --brand-accent: #c85e43;
       --bg-dark: #0f172a;
-      --bg-header: #1e293b;
+      --bg-header: var(--brand-primary);
       --bg-surface: #ffffff;
       --bg-subtle: #f8fafc;
       --bg-muted: #f1f5f9;
@@ -41,7 +43,7 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: "Aptos", sans-serif;
       background: var(--bg-subtle);
       color: var(--text-main);
       height: 100vh;
@@ -71,7 +73,7 @@
     }
 
     .logo-badge {
-      background: linear-gradient(135deg, #0284c7, #059669);
+      background: var(--brand-primary);
       color: white;
       font-weight: 800;
       font-size: 16px;
@@ -81,8 +83,16 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
 
+    .project-logo {
+      display: block;
+      max-width: 144px;
+      max-height: 48px;
+      object-fit: contain;
+    }
+
     .header-title-box h1 {
       font-size: 17px;
+      font-family: "Georgia", sans-serif;
       font-weight: 700;
       letter-spacing: -0.2px;
       display: flex;
@@ -117,11 +127,11 @@
     }
 
     .btn-primary {
-      background: #2563eb;
+      background: var(--brand-primary);
       color: #fff;
     }
     .btn-primary:hover {
-      background: #1d4ed8;
+      background: var(--brand-accent);
     }
 
     .btn-outline {
@@ -756,8 +766,8 @@
     }
 
     .gantt-bar.task-bar-default {
-      background: linear-gradient(135deg, #176b58, #10513f);
-      border: 1px solid #176b58;
+      background: var(--brand-primary);
+      border: 1px solid var(--brand-primary);
     }
 
     .gantt-bar.deliverable-bar {
@@ -773,7 +783,7 @@
     }
 
     .gantt-bar.parent-summary-bar.task-bar-default {
-      background: #10513f;
+      background: var(--brand-primary);
     }
 
     /* Milestone Diamond */
@@ -1120,7 +1130,7 @@
   <!-- Top App Header -->
   <header class="app-header">
     <div class="header-branding">
-      <div class="logo-badge">GANTT</div>
+      <div class="logo-badge">PLAN</div>
       <div class="header-title-box">
         <h1>Sample Project Plan</h1>
         <p>Example Client · 2026-01-01 to 2026-12-31</p>
@@ -1974,7 +1984,7 @@
 
         // Project badge dot
         const dot = document.createElement("span");
-        dot.style.cssText = "width:6px; height:6px; border-radius:50%; background:#176b58; flex-shrink:0;";
+        dot.style.cssText = "width:6px; height:6px; border-radius:50%; background:var(--brand-primary); flex-shrink:0;";
         nameWrapper.appendChild(dot);
 
         // Name text (strictly contained with ellipsis and full title tooltip)

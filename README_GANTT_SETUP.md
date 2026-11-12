@@ -6,9 +6,10 @@ Use this repository to create a standalone interactive Gantt chart for a new pro
 
 1. Open [`setup.html`](setup.html) in a browser.
 2. Enter the project name, client name, overall timeline, and task dates. Turn on **Include subtasks** or **Include milestones** as needed; subtasks can be assigned to a parent task.
-3. Choose **Download schedule file**. Save the downloaded `schedule_data.json` over the file with the same name in this repository.
-4. Run `python build_interactive_gantt.py` from this folder. This replaces `index.html` with the chart for the entered project.
-5. Open [`index.html`](index.html), or double-click [`Start_Gantt_Chart.bat`](Start_Gantt_Chart.bat).
+3. Optionally choose primary and accent colors, heading and body fonts, and a PNG, JPEG, or WebP project logo (up to 2 MB).
+4. Choose **Download schedule file**. Save the downloaded `schedule_data.json` over the file with the same name in this repository.
+5. Run `python build_interactive_gantt.py` from this folder. This replaces `index.html` with the chart for the entered project.
+6. Open [`index.html`](index.html), or double-click [`Start_Gantt_Chart.bat`](Start_Gantt_Chart.bat).
 
 Python 3 is required to build the chart. The generated chart itself runs in a modern browser without a server. Task edits are saved in that browser; use its Excel or CSV export buttons to download a copy.
 
