@@ -834,7 +834,14 @@ html_content = f'''<!DOCTYPE html>
       height: 8px;
       top: 15px;
       border-radius: 3px;
-      background: #334155;
+    }}
+
+    .gantt-bar.parent-summary-bar.task-bar-smtp {{
+      background: #06537d;
+    }}
+
+    .gantt-bar.parent-summary-bar.task-bar-tcrs {{
+      background: #33957f;
     }}
 
     /* Milestone Diamond */

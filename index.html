@@ -10,8 +10,8 @@
     :root {
       --primary-smtp: #0284c7;
       --primary-smtp-dark: #0369a1;
-      --primary-tcrs: #059669;
-      --primary-tcrs-dark: #047857;
+      --primary-tcrs: #15803d;
+      --primary-tcrs-dark: #007b5f;
       --bg-dark: #0f172a;
       --bg-header: #1e293b;
       --bg-surface: #ffffff;
@@ -23,7 +23,7 @@
       --text-muted: #64748b;
       --text-light: #94a3b8;
 
-      --status-complete: #10b981;
+      --status-complete: #00B140;
       --status-complete-bg: #ecfdf5;
       --status-progress: #3b82f6;
       --status-progress-bg: #eff6ff;
@@ -75,7 +75,8 @@
     }
 
     .logo-badge {
-      background: linear-gradient(135deg, #0284c7, #059669);
+      /* background: linear-gradient(135deg, #0284c7, #059669); */
+      background: #007b5f;
       color: white;
       font-weight: 800;
       font-size: 16px;
@@ -137,11 +138,11 @@
     }
 
     .btn-tcrs {
-      background: #059669;
+      background: #007b5f;
       color: #fff;
     }
     .btn-tcrs:hover {
-      background: #047857;
+      background: #00B140;
     }
 
     .btn-outline {
@@ -165,11 +166,12 @@
     }
 
     .btn-success {
-      background: #10b981;
+      background: #b9a010;
       color: white;
     }
     .btn-success:hover {
-      background: #059669;
+      background: #e3c204;
+;
     }
 
     /* Project Filter Tab Pill */
@@ -207,12 +209,12 @@
     }
 
     .tab-btn.active[data-project="SMTP"] {
-      background: #38bdf8;
+      background: #87d7fa;
       color: #0c4a6e;
     }
 
     .tab-btn.active[data-project="TCRS"] {
-      background: #34d399;
+      background: #99e0b3;
       color: #064e3b;
     }
 
@@ -800,12 +802,12 @@
     /* Type Specific Bar Styles */
     .gantt-bar.task-bar-smtp {
       background: linear-gradient(135deg, #0284c7, #0369a1);
-      border: 1px solid #0284c7;
+      border: 1px solid #a5bfcc;
     }
 
     .gantt-bar.task-bar-tcrs {
-      background: linear-gradient(135deg, #059669, #047857);
-      border: 1px solid #059669;
+      background: linear-gradient(135deg, #33c166, #00b140);
+      border: 1px solid #9cc0b5;
     }
 
     .gantt-bar.deliverable-bar {
@@ -818,7 +820,14 @@
       height: 8px;
       top: 15px;
       border-radius: 3px;
-      background: #334155;
+    }
+
+    .gantt-bar.parent-summary-bar.task-bar-smtp {
+      background: #06537d;
+    }
+
+    .gantt-bar.parent-summary-bar.task-bar-tcrs {
+      background: #33957f;
     }
 
     /* Milestone Diamond */
