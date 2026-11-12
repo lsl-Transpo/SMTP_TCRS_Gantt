@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Gantt Chart Setup</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172a2a;
+      --muted: #647574;
+      --line: #d3ddda;
+      --paper: #fbfcf8;
+      --panel: #ffffff;
+      --green: #176b58;
+      --green-dark: #10513f;
+      --coral: #c85e43;
+      --soft-green: #e8f1ec;
+      --focus: #df9b4e;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: repeating-linear-gradient(135deg, transparent 0 23px, rgba(23,107,88,.035) 23px 24px), var(--paper);
+      color: var(--ink);
+      font: 15px/1.5 "Aptos", "Segoe UI", sans-serif;
+    }
+    header {
+      background: var(--green-dark);
+      color: #fff;
+      padding: 28px max(24px, calc((100% - 1120px) / 2));
+      border-bottom: 5px solid var(--coral);
+    }
+    .eyebrow { color: #b7d8ca; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+    h1 { margin: 5px 0 3px; font: 600 30px/1.15 Georgia, serif; }
+    header p { margin: 0; color: #dce9e2; }
+    main { width: min(1120px, calc(100% - 36px)); margin: 28px auto 60px; }
+    form { background: var(--panel); border: 1px solid var(--line); border-top: 3px solid var(--green); }
+    fieldset { border: 0; border-bottom: 1px solid var(--line); padding: 24px; margin: 0; }
+    legend { padding: 0; font: 600 20px Georgia, serif; }
+    .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .field { display: grid; gap: 6px; min-width: 0; }
+    .field label, .field-label { font-weight: 650; font-size: 13px; }
+    input, select { width: 100%; min-height: 40px; padding: 8px 10px; border: 1px solid #aebdb7; border-radius: 3px; background: white; color: var(--ink); font: inherit; }
+    input:focus, select:focus { outline: 3px solid rgba(223,155,78,.28); border-color: var(--focus); }
+    .choices { display: flex; gap: 22px; flex-wrap: wrap; margin-top: 18px; }
+    .choice { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+    .choice input { width: 18px; min-height: 18px; accent-color: var(--green); }
+    .section-heading { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 16px; }
+    .section-heading p { color: var(--muted); margin: 5px 0 0; font-size: 13px; }
+    .task-list { display: grid; gap: 10px; }
+    .task-row { display: grid; grid-template-columns: minmax(170px, 2fr) minmax(115px, .9fr) minmax(140px, 1.2fr) repeat(2, minmax(130px, 1fr)) 38px; gap: 9px; align-items: end; padding: 12px; background: #f5f8f5; border-left: 3px solid var(--green); }
+    .task-row .field label { font-size: 11px; color: var(--muted); }
+    .task-row input, .task-row select { min-height: 36px; font-size: 13px; }
+    button { border: 0; cursor: pointer; font: inherit; font-weight: 700; }
+    .button { min-height: 40px; padding: 8px 14px; border-radius: 3px; }
+    .button-add { color: var(--green-dark); background: var(--soft-green); border: 1px solid #bfd4c8; }
+    .button-remove { width: 36px; height: 36px; color: #9e3829; background: #fff; border: 1px solid #e3b4aa; font-size: 20px; }
+    .button-submit { background: var(--green); color: #fff; padding-inline: 20px; }
+    .button-submit:hover { background: var(--green-dark); }
+    .form-footer { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 20px 24px; }
+    .note, #result { color: var(--muted); font-size: 13px; }
+    #result { padding: 0 24px 20px; color: var(--green-dark); font-weight: 650; }
+    [hidden] { display: none !important; }
+    @media (max-width: 850px) {
+      .task-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .task-row .button-remove { grid-column: 2; justify-self: end; }
+    }
+    @media (max-width: 560px) {
+      header { padding: 22px 18px; }
+      h1 { font-size: 26px; }
+      main { width: calc(100% - 20px); margin-top: 14px; }
+      fieldset { padding: 18px 14px; }
+      .fields { grid-template-columns: 1fr; }
+      .task-row { grid-template-columns: 1fr 1fr; padding: 10px; }
+      .task-row .field:first-child, .task-row .field:nth-child(3) { grid-column: 1 / -1; }
+      .section-heading, .form-footer { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="eyebrow">Interactive Gantt Chart Template</div>
+    <h1>Set up a project schedule</h1>
+    <p>Enter the project details and schedule items. Your browser will download a file for the chart builder.</p>
+  </header>
+  <main>
+    <form id="setup-form">
+      <fieldset>
+        <legend>Project details</legend>
+        <div class="fields">
+          <div class="field">
+            <label for="project-name">Project name</label>
+            <input id="project-name" required maxlength="100" placeholder="e.g. Downtown Corridor Study">
+          </div>
+          <div class="field">
+            <label for="client-name">Client name</label>
+            <input id="client-name" required maxlength="100" placeholder="e.g. City of Example">
+          </div>
+          <div class="field">
+            <label for="timeline-start">Timeline start</label>
+            <input id="timeline-start" type="date" required>
+          </div>
+          <div class="field">
+            <label for="timeline-end">Timeline end</label>
+            <input id="timeline-end" type="date" required>
+          </div>
+        </div>
+        <div class="choices">
+          <label class="choice"><input id="enable-subtasks" type="checkbox"> Include subtasks</label>
+          <label class="choice"><input id="enable-milestones" type="checkbox"> Include milestones</label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <div class="section-heading">
+          <div>
+            <legend>Tasks and milestones</legend>
+            <p>Add the work items that should appear on the chart. Subtasks can be assigned to a parent task.</p>
+          </div>
+          <button type="button" class="button button-add" id="add-task">+ Add item</button>
+        </div>
+        <div class="task-list" id="task-list"></div>
+      </fieldset>
+      <div class="form-footer">
+        <span class="note">The downloaded JSON is the input for <strong>build_interactive_gantt.py</strong>.</span>
+        <button type="submit" class="button button-submit">Download schedule file</button>
+      </div>
+      <div id="result" role="status" aria-live="polite"></div>
+    </form>
+  </main>
+  <script>
+    const taskList = document.getElementById("task-list");
+    const subtasksToggle = document.getElementById("enable-subtasks");
+    const milestonesToggle = document.getElementById("enable-milestones");
+    let nextRowId = 1;
+
+    function taskRows() {
+      return [...taskList.querySelectorAll(".task-row")];
+    }
+
+    function refreshRows() {
+      taskRows().forEach(row => {
+        const type = row.querySelector('[data-field="type"]');
+        const parent = row.querySelector('[data-field="parent"]');
+        const selectedType = type.value;
+        const selectedParent = parent.value;
+        type.innerHTML = "";
+        ["Task", ...(milestonesToggle.checked ? ["Milestone"] : [])].forEach(value => {
+          const option = new Option(value, value);
+          type.add(option);
+        });
+        type.value = milestonesToggle.checked && selectedType === "Milestone" ? "Milestone" : "Task";
+        if (selectedParent && !subtasksToggle.checked) parent.value = "";
+        parent.innerHTML = "";
+        parent.add(new Option("Top-level item", ""));
+        if (subtasksToggle.checked) {
+          const currentRowIndex = taskRows().indexOf(row);
+          taskRows().filter((candidate, index) => index < currentRowIndex && candidate.querySelector('[data-field="type"]').value === "Task")
+            .forEach(candidate => parent.add(new Option(candidate.querySelector('[data-field="name"]').value || "Untitled task", candidate.dataset.rowId)));
+        }
+        parent.disabled = !subtasksToggle.checked;
+        row.querySelector('[data-field="start"]').disabled = type.value === "Milestone";
+        row.querySelector('[data-field="start"]').required = type.value !== "Milestone";
+      });
+    }
+
+    function addRow() {
+      const row = document.createElement("div");
+      row.className = "task-row";
+      row.dataset.rowId = String(nextRowId++);
+      row.innerHTML = `
+        <div class="field"><label>Item name</label><input data-field="name" required maxlength="160" placeholder="Task or milestone name"></div>
+        <div class="field"><label>Type</label><select data-field="type"></select></div>
+        <div class="field"><label>Parent task</label><select data-field="parent"></select></div>
+        <div class="field"><label>Start date</label><input data-field="start" type="date"></div>
+        <div class="field"><label>Due date</label><input data-field="due" type="date" required></div>
+        <button type="button" class="button-remove" aria-label="Remove item" title="Remove item">&times;</button>`;
+      row.querySelector('[data-field="name"]').addEventListener("input", refreshRows);
+      row.querySelector('[data-field="type"]').addEventListener("change", refreshRows);
+      row.querySelector(".button-remove").addEventListener("click", () => {
+        row.remove();
+        refreshRows();
+      });
+      taskList.appendChild(row);
+      refreshRows();
+    }
+
+    document.getElementById("add-task").addEventListener("click", addRow);
+    subtasksToggle.addEventListener("change", refreshRows);
+    milestonesToggle.addEventListener("change", refreshRows);
+    document.getElementById("timeline-start").addEventListener("change", event => {
+      document.getElementById("timeline-end").min = event.target.value;
+    });
+
+    document.getElementById("setup-form").addEventListener("submit", event => {
+      event.preventDefault();
+      const rows = taskRows();
+      const start = document.getElementById("timeline-start").value;
+      const end = document.getElementById("timeline-end").value;
+      if (!rows.length) {
+        document.getElementById("result").textContent = "Add at least one task or milestone.";
+        return;
+      }
+      if (end < start) {
+        document.getElementById("result").textContent = "Timeline end must be on or after the start date.";
+        return;
+      }
+      const hasOutOfRangeDates = rows.some(row => {
+        const type = row.querySelector('[data-field="type"]').value;
+        const itemStart = row.querySelector('[data-field="start"]').value;
+        const itemEnd = row.querySelector('[data-field="due"]').value;
+        return itemEnd < start || itemEnd > end || (type === "Task" && (itemStart < start || itemStart > itemEnd));
+      });
+      if (hasOutOfRangeDates) {
+        document.getElementById("result").textContent = "Task dates must fall within the project timeline, and task start dates cannot follow due dates.";
+        return;
+      }
+      const records = rows.map((row, index) => ({
+        id: `item-${index + 1}`,
+        name: row.querySelector('[data-field="name"]').value.trim(),
+        type: row.querySelector('[data-field="type"]').value,
+        parentRowId: row.querySelector('[data-field="parent"]').value,
+        startDate: row.querySelector('[data-field="start"]').value,
+        dueDate: row.querySelector('[data-field="due"]').value
+      }));
+      const byRowId = new Map(rows.map((row, index) => [row.dataset.rowId, records[index]]));
+      const childCount = new Map();
+      let rootCount = 0;
+      records.forEach(record => {
+        const parent = record.parentRowId ? byRowId.get(record.parentRowId) : null;
+        if (parent) {
+          const siblingIndex = (childCount.get(parent.id) || 0) + 1;
+          childCount.set(parent.id, siblingIndex);
+          record.wbs = `${parent.wbs}.${siblingIndex}`;
+        } else {
+          record.wbs = String(++rootCount);
+        }
+      });
+      const tasks = records.map(record => {
+        const parent = record.parentRowId ? byRowId.get(record.parentRowId) : null;
+        const parentId = parent ? parent.id : "";
+        return {
+          "Project": document.getElementById("project-name").value.trim(),
+          "Task ID": record.id,
+          "Parent ID": parentId,
+          "Parent Task": parent ? parent.name : "",
+          "Task Name": record.name,
+          "Task Type": record.type,
+          "Status": "To Do",
+          "Start Date": record.type === "Milestone" ? "" : record.startDate,
+          "Due Date": record.dueDate,
+          "Assignees": "",
+          "Priority": "Normal",
+          "Tags": "",
+          "Description": "",
+          "Task Link": "",
+          "WBS": record.wbs,
+          "Level": parent ? 2 : 1
+        };
+      });
+      const schedule = {
+        metadata: {
+          projectName: document.getElementById("project-name").value.trim(),
+          clientName: document.getElementById("client-name").value.trim(),
+          startDate: start,
+          endDate: end
+        },
+        tasks
+      };
+      const blob = new Blob([JSON.stringify(schedule, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "schedule_data.json";
+      link.click();
+      URL.revokeObjectURL(url);
+      document.getElementById("result").textContent = "Schedule downloaded. Replace schedule_data.json in this folder, then run the chart builder.";
+    });
+
+    addRow();
+  </script>
+</body>
+</html>

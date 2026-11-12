@@ -3,15 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WSDOT SMTP & TCRS Interactive Project Gantt</title>
+  <title>Sample Project Plan | Interactive Gantt Chart</title>
   <!-- Load SheetJS for Excel .xlsx read and write -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
     :root {
-      --primary-smtp: #0284c7;
-      --primary-smtp-dark: #0369a1;
-      --primary-tcrs: #15803d;
-      --primary-tcrs-dark: #007b5f;
       --bg-dark: #0f172a;
       --bg-header: #1e293b;
       --bg-surface: #ffffff;
@@ -23,7 +19,7 @@
       --text-muted: #64748b;
       --text-light: #94a3b8;
 
-      --status-complete: #00B140;
+      --status-complete: #10b981;
       --status-complete-bg: #ecfdf5;
       --status-progress: #3b82f6;
       --status-progress-bg: #eff6ff;
@@ -75,8 +71,7 @@
     }
 
     .logo-badge {
-      /* background: linear-gradient(135deg, #0284c7, #059669); */
-      background: #007b5f;
+      background: linear-gradient(135deg, #0284c7, #059669);
       color: white;
       font-weight: 800;
       font-size: 16px;
@@ -129,22 +124,6 @@
       background: #1d4ed8;
     }
 
-    .btn-smtp {
-      background: #0284c7;
-      color: #fff;
-    }
-    .btn-smtp:hover {
-      background: #0369a1;
-    }
-
-    .btn-tcrs {
-      background: #007b5f;
-      color: #fff;
-    }
-    .btn-tcrs:hover {
-      background: #00B140;
-    }
-
     .btn-outline {
       background: rgba(255,255,255,0.08);
       color: #f1f5f9;
@@ -166,12 +145,11 @@
     }
 
     .btn-success {
-      background: #b9a010;
+      background: #10b981;
       color: white;
     }
     .btn-success:hover {
-      background: #e3c204;
-;
+      background: #059669;
     }
 
     /* Project Filter Tab Pill */
@@ -206,16 +184,6 @@
       background: #ffffff;
       color: #0f172a;
       box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-    }
-
-    .tab-btn.active[data-project="SMTP"] {
-      background: #87d7fa;
-      color: #0c4a6e;
-    }
-
-    .tab-btn.active[data-project="TCRS"] {
-      background: #99e0b3;
-      color: #064e3b;
     }
 
     /* Sub Toolbar */
@@ -589,18 +557,6 @@
       line-height: 1.3;
     }
 
-    .badge-smtp {
-      background: #e0f2fe;
-      color: #0369a1;
-      border: 1px solid #bae6fd;
-    }
-
-    .badge-tcrs {
-      background: #dcfce7;
-      color: #15803d;
-      border: 1px solid #bbf7d0;
-    }
-
     .badge-complete {
       background: var(--status-complete-bg);
       color: #065f46;
@@ -799,15 +755,9 @@
       z-index: 9;
     }
 
-    /* Type Specific Bar Styles */
-    .gantt-bar.task-bar-smtp {
-      background: linear-gradient(135deg, #0284c7, #0369a1);
-      border: 1px solid #a5bfcc;
-    }
-
-    .gantt-bar.task-bar-tcrs {
-      background: linear-gradient(135deg, #33c166, #00b140);
-      border: 1px solid #9cc0b5;
+    .gantt-bar.task-bar-default {
+      background: linear-gradient(135deg, #176b58, #10513f);
+      border: 1px solid #176b58;
     }
 
     .gantt-bar.deliverable-bar {
@@ -822,12 +772,8 @@
       border-radius: 3px;
     }
 
-    .gantt-bar.parent-summary-bar.task-bar-smtp {
-      background: #06537d;
-    }
-
-    .gantt-bar.parent-summary-bar.task-bar-tcrs {
-      background: #33957f;
+    .gantt-bar.parent-summary-bar.task-bar-default {
+      background: #10513f;
     }
 
     /* Milestone Diamond */
@@ -1174,18 +1120,17 @@
   <!-- Top App Header -->
   <header class="app-header">
     <div class="header-branding">
-      <div class="logo-badge">WSDOT</div>
+      <div class="logo-badge">GANTT</div>
       <div class="header-title-box">
-        <h1>SMTP & TCRS Project Schedule Gantt</h1>
-        <p>Statewide Multimodal Transportation Plan (SMTP) & Transportation Carbon Reduction Strategy (TCRS)</p>
+        <h1>Sample Project Plan</h1>
+        <p>Example Client · 2026-01-01 to 2026-12-31</p>
       </div>
     </div>
 
     <!-- Project Tabs -->
     <div class="project-tabs">
-      <button class="tab-btn active" data-project="ALL">🌐 All Projects (171)</button>
-      <button class="tab-btn" data-project="SMTP">🔵 SMTP (97)</button>
-      <button class="tab-btn" data-project="TCRS">🟢 TCRS (74)</button>
+      <button class="tab-btn active" data-project="ALL">All Tasks (7)</button>
+      <button class="tab-btn" data-project="Sample Project Plan">Sample Project Plan (7)</button>
     </div>
 
     <!-- Global Actions -->
@@ -1337,8 +1282,7 @@
           <div class="form-group" style="flex:1;">
             <label>Project</label>
             <select class="form-control" id="edit-project">
-              <option value="SMTP">SMTP (Statewide Multimodal)</option>
-              <option value="TCRS">TCRS (Carbon Reduction)</option>
+              <option value="Sample Project Plan">Sample Project Plan</option>
             </select>
           </div>
           <div class="form-group" style="flex:1;">
@@ -1441,3088 +1385,136 @@
   <!-- Drag & Drop Overlay -->
   <div class="dropzone-overlay" id="dropzone-overlay">
     <div>📥 Drop Excel (.xlsx) or CSV file here to update schedule!</div>
-    <div style="font-size:14px; font-weight:400; opacity:0.9;">Both SMTP and TCRS tasks will automatically sync</div>
+    <div style="font-size:14px; font-weight:400; opacity:0.9;">Imported schedule data replaces the current task list</div>
   </div>
 
   <script>
     // Initial Baseline Dataset Embedded
     const BASELINE_TASKS = [
   {
-    "Project": "SMTP",
-    "Task ID": "86bbh427u",
+    "Project": "Sample Project Plan",
+    "Task ID": "sample-1",
     "Parent ID": "",
     "Parent Task": "",
-    "Task Name": "Task 2: Work Plan Development",
+    "Task Name": "Project kickoff",
     "Task Type": "Task",
     "Status": "Complete",
-    "Start Date": "2026-05-01",
-    "Due Date": "2026-06-30",
+    "Start Date": "2026-01-05",
+    "Due Date": "2026-01-16",
     "Assignees": "",
     "Priority": "Normal",
-    "Tags": "Task Order 1",
+    "Tags": "",
     "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh427u",
+    "Task Link": "",
     "WBS": "1",
     "Level": 1
   },
   {
-    "Project": "SMTP",
-    "Task ID": "86bbhum7x",
-    "Parent ID": "86bbh427u",
-    "Parent Task": "Task 2: Work Plan Development",
-    "Task Name": "Engagement Work Plan",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-05-01",
-    "Due Date": "2026-06-30",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhum7x",
-    "WBS": "1.1",
-    "Level": 2
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh4284",
-    "Parent ID": "86bbh427u",
-    "Parent Task": "Task 2: Work Plan Development",
-    "Task Name": "Technical Task Work Plan",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-05-01",
-    "Due Date": "2026-06-05",
-    "Assignees": "",
-    "Priority": "Urgent",
-    "Tags": "Task Order 1",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh4284",
-    "WBS": "1.2",
-    "Level": 2
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh4283",
-    "Parent ID": "86bbh427u",
-    "Parent Task": "Task 2: Work Plan Development",
-    "Task Name": "Final Reporting Work Plan",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-08-31",
-    "Due Date": "2026-09-30",
-    "Assignees": "",
-    "Priority": "High",
-    "Tags": "Task Order 1",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh4283",
-    "WBS": "1.3",
-    "Level": 2
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhunc9",
-    "Parent ID": "86bbh4283",
-    "Parent Task": "Final Reporting Work Plan",
-    "Task Name": "Final Task Order for Procurement",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "2026-09-30",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhunc9",
-    "WBS": "1.3.1",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhun43",
-    "Parent ID": "86bbh4283",
-    "Parent Task": "Final Reporting Work Plan",
-    "Task Name": "Draft Task Order for WSDOT Review",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "2026-09-18",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhun43",
-    "WBS": "1.3.2",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh427v",
+    "Project": "Sample Project Plan",
+    "Task ID": "sample-2",
     "Parent ID": "",
     "Parent Task": "",
-    "Task Name": "Task 1: Project Management",
+    "Task Name": "Requirements and discovery",
     "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-06-05",
-    "Due Date": "2027-12-30",
-    "Assignees": "Leslie Langley",
+    "Status": "In Progress",
+    "Start Date": "2026-01-19",
+    "Due Date": "2026-02-27",
+    "Assignees": "",
     "Priority": "Normal",
-    "Tags": "Task Order 1",
+    "Tags": "",
     "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh427v",
+    "Task Link": "",
     "WBS": "2",
     "Level": 1
   },
   {
-    "Project": "SMTP",
-    "Task ID": "86bbhuhna",
-    "Parent ID": "86bbh427v",
-    "Parent Task": "Task 1: Project Management",
-    "Task Name": "Compliance Matrix",
+    "Project": "Sample Project Plan",
+    "Task ID": "sample-3",
+    "Parent ID": "sample-2",
+    "Parent Task": "Requirements and discovery",
+    "Task Name": "Stakeholder interviews",
     "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-06-05",
-    "Due Date": "2026-09-18",
+    "Status": "To Do",
+    "Start Date": "2026-01-19",
+    "Due Date": "2026-02-13",
     "Assignees": "",
     "Priority": "Normal",
     "Tags": "",
     "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhuhna",
+    "Task Link": "",
     "WBS": "2.1",
     "Level": 2
   },
   {
-    "Project": "SMTP",
-    "Task ID": "86bbhujkt",
-    "Parent ID": "86bbhuhna",
-    "Parent Task": "Compliance Matrix",
-    "Task Name": "WSDOT Review",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-08-28",
-    "Due Date": "2026-09-04",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhujkt",
-    "WBS": "2.1.1",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhujxq",
-    "Parent ID": "86bbhuhna",
-    "Parent Task": "Compliance Matrix",
-    "Task Name": "Final Compliance Matrix",
+    "Project": "Sample Project Plan",
+    "Task ID": "sample-4",
+    "Parent ID": "sample-2",
+    "Parent Task": "Requirements and discovery",
+    "Task Name": "Requirements approved",
     "Task Type": "Milestone",
-    "Status": "Complete",
+    "Status": "To Do",
     "Start Date": "",
-    "Due Date": "2026-09-11",
+    "Due Date": "2026-02-27",
     "Assignees": "",
     "Priority": "Normal",
     "Tags": "",
     "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhujxq",
-    "WBS": "2.1.2",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhuj9j",
-    "Parent ID": "86bbhuhna",
-    "Parent Task": "Compliance Matrix",
-    "Task Name": "Draft Compliance Matrix",
-    "Task Type": "Milestone",
-    "Status": "Complete",
-    "Start Date": "",
-    "Due Date": "2026-08-28",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhuj9j",
-    "WBS": "2.1.3",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bckpvdv",
-    "Parent ID": "86bbh427v",
-    "Parent Task": "Task 1: Project Management",
-    "Task Name": "bi-weekly meetings - agenda and notes",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "Leslie Langley",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bckpvdv",
+    "Task Link": "",
     "WBS": "2.2",
     "Level": 2
   },
   {
-    "Project": "SMTP",
-    "Task ID": "86bbhpdt3",
-    "Parent ID": "86bbh427v",
-    "Parent Task": "Task 1: Project Management",
-    "Task Name": "SMTP Monthly (Regions & Divisions)",
+    "Project": "Sample Project Plan",
+    "Task ID": "sample-5",
+    "Parent ID": "",
+    "Parent Task": "",
+    "Task Name": "Design and delivery",
     "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-06-01",
-    "Due Date": "2027-12-31",
+    "Status": "To Do",
+    "Start Date": "2026-03-02",
+    "Due Date": "2026-05-29",
     "Assignees": "",
     "Priority": "Normal",
     "Tags": "",
     "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhpdt3",
-    "WBS": "2.3",
-    "Level": 2
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh427w",
-    "Parent ID": "",
-    "Parent Task": "",
-    "Task Name": "Task 4: Existing and Future Conditions",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-08-03",
-    "Due Date": "2026-09-30",
-    "Assignees": "Paul Sharman",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh427w",
+    "Task Link": "",
     "WBS": "3",
     "Level": 1
   },
   {
-    "Project": "SMTP",
-    "Task ID": "86bbh6tbz",
-    "Parent ID": "86bbh427w",
-    "Parent Task": "Task 4: Existing and Future Conditions",
-    "Task Name": "Existing & Future Conditions- Draft Report",
+    "Project": "Sample Project Plan",
+    "Task ID": "sample-6",
+    "Parent ID": "sample-5",
+    "Parent Task": "Design and delivery",
+    "Task Name": "Draft proposal",
     "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-05-01",
-    "Due Date": "2026-08-14",
-    "Assignees": "Paul Sharman",
+    "Status": "To Do",
+    "Start Date": "2026-03-02",
+    "Due Date": "2026-04-10",
+    "Assignees": "",
     "Priority": "Normal",
     "Tags": "",
     "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh6tbz",
+    "Task Link": "",
     "WBS": "3.1",
     "Level": 2
   },
   {
-    "Project": "SMTP",
-    "Task ID": "86bbh6umc",
-    "Parent ID": "86bbh6tbz",
-    "Parent Task": "Existing & Future Conditions- Draft Report",
-    "Task Name": "Draft of Existing Conditions",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-08-14",
-    "Due Date": "2026-08-14",
+    "Project": "Sample Project Plan",
+    "Task ID": "sample-7",
+    "Parent ID": "sample-5",
+    "Parent Task": "Design and delivery",
+    "Task Name": "Final review",
+    "Task Type": "Milestone",
+    "Status": "To Do",
+    "Start Date": "",
+    "Due Date": "2026-05-29",
     "Assignees": "",
     "Priority": "Normal",
     "Tags": "",
     "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh6umc",
-    "WBS": "3.1.1",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhp46z",
-    "Parent ID": "86bbh427w",
-    "Parent Task": "Task 4: Existing and Future Conditions",
-    "Task Name": "Existing Conditions- WSDOT Review",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "",
-    "Due Date": "2026-08-28",
-    "Assignees": "Paul Sharman",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhp46z",
+    "Task Link": "",
     "WBS": "3.2",
-    "Level": 2
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhp67p",
-    "Parent ID": "86bbhp46z",
-    "Parent Task": "Existing Conditions- WSDOT Review",
-    "Task Name": "Existing Conditions- Consolidated WSDOT Comments",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhp67p",
-    "WBS": "3.2.1",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh6thy",
-    "Parent ID": "86bbh427w",
-    "Parent Task": "Task 4: Existing and Future Conditions",
-    "Task Name": "Existing & Future Conditions- Final Report",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-06-01",
-    "Due Date": "2026-09-18",
-    "Assignees": "Paul Sharman",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh6thy",
-    "WBS": "3.3",
-    "Level": 2
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhp6g6",
-    "Parent ID": "86bbh6thy",
-    "Parent Task": "Existing & Future Conditions- Final Report",
-    "Task Name": "Existing Conditions Final Document",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "2026-08-28",
-    "Due Date": "2026-09-18",
-    "Assignees": "Paul Sharman",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhp6g6",
-    "WBS": "3.3.1",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh4fxf",
-    "Parent ID": "",
-    "Parent Task": "",
-    "Task Name": "Task 6: Documentation and Delivery",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-05-01",
-    "Due Date": "2027-12-30",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh4fxf",
-    "WBS": "4",
-    "Level": 1
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhv3qt",
-    "Parent ID": "86bbh4fxf",
-    "Parent Task": "Task 6: Documentation and Delivery",
-    "Task Name": "Programmatic Priorities",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-10-19",
-    "Due Date": "2027-04-02",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhv3qt",
-    "WBS": "4.1",
-    "Level": 2
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhv2gj",
-    "Parent ID": "86bbh4fxf",
-    "Parent Task": "Task 6: Documentation and Delivery",
-    "Task Name": "Annotated Outline",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "2026-09-21",
-    "Due Date": "2026-10-16",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhv2gj",
-    "WBS": "4.2",
-    "Level": 2
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhv2ym",
-    "Parent ID": "86bbhv2gj",
-    "Parent Task": "Annotated Outline",
-    "Task Name": "WSDOT Review",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "2026-10-02",
-    "Due Date": "2026-10-09",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhv2ym",
-    "WBS": "4.2.1",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhv30z",
-    "Parent ID": "86bbhv2gj",
-    "Parent Task": "Annotated Outline",
-    "Task Name": "Approved Annotated Outline",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "2026-10-16",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhv30z",
-    "WBS": "4.2.2",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhv2nq",
-    "Parent ID": "86bbhv2gj",
-    "Parent Task": "Annotated Outline",
-    "Task Name": "Draft Annotated Outline",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "2026-10-02",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhv2nq",
-    "WBS": "4.2.3",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhv354",
-    "Parent ID": "86bbh4fxf",
-    "Parent Task": "Task 6: Documentation and Delivery",
-    "Task Name": "Vignettes/Personas",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "2026-10-01",
-    "Due Date": "2026-12-31",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhv354",
-    "WBS": "4.3",
-    "Level": 2
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhv38a",
-    "Parent ID": "86bbhv354",
-    "Parent Task": "Vignettes/Personas",
-    "Task Name": "Draft Vignettes/Personas",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "2026-11-16",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhv38a",
-    "WBS": "4.3.1",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhv3bp",
-    "Parent ID": "86bbhv354",
-    "Parent Task": "Vignettes/Personas",
-    "Task Name": "WSDOT Review",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "2026-11-16",
-    "Due Date": "2026-12-04",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhv3bp",
-    "WBS": "4.3.2",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhv3fq",
-    "Parent ID": "86bbhv354",
-    "Parent Task": "Vignettes/Personas",
-    "Task Name": "Final Vingettes/Personas",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "2026-12-18",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhv3fq",
-    "WBS": "4.3.3",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhv3yr",
-    "Parent ID": "86bbh4fxf",
-    "Parent Task": "Task 6: Documentation and Delivery",
-    "Task Name": "Final Plan Documentation",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhv3yr",
-    "WBS": "4.4",
-    "Level": 2
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhv88h",
-    "Parent ID": "86bbhv3yr",
-    "Parent Task": "Final Plan Documentation",
-    "Task Name": "Revised Draft 1",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhv88h",
-    "WBS": "4.4.1",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhvb9v",
-    "Parent ID": "86bbhv3yr",
-    "Parent Task": "Final Plan Documentation",
-    "Task Name": "Final Review & Adoption",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhvb9v",
-    "WBS": "4.4.2",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhv42w",
-    "Parent ID": "86bbhv3yr",
-    "Parent Task": "Final Plan Documentation",
-    "Task Name": "Draft Plan for WSDOT Review",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhv42w",
-    "WBS": "4.4.3",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhv7uu",
-    "Parent ID": "86bbhv3yr",
-    "Parent Task": "Final Plan Documentation",
-    "Task Name": "Plan Revisions (Round 1)",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhv7uu",
-    "WBS": "4.4.4",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhv83p",
-    "Parent ID": "86bbhv3yr",
-    "Parent Task": "Final Plan Documentation",
-    "Task Name": "Plan Revisions (Round 2)",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhv83p",
-    "WBS": "4.4.5",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhva8x",
-    "Parent ID": "86bbhv3yr",
-    "Parent Task": "Final Plan Documentation",
-    "Task Name": "Tribal & Agency Review Draft (Draft #2)",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhva8x",
-    "WBS": "4.4.6",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhvavx",
-    "Parent ID": "86bbhv3yr",
-    "Parent Task": "Final Plan Documentation",
-    "Task Name": "Final Draft",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhvavx",
-    "WBS": "4.4.7",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhvazb",
-    "Parent ID": "86bbhv3yr",
-    "Parent Task": "Final Plan Documentation",
-    "Task Name": "Public Review",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhvazb",
-    "WBS": "4.4.8",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhvbfc",
-    "Parent ID": "86bbhv3yr",
-    "Parent Task": "Final Plan Documentation",
-    "Task Name": "Plan Publication & FHWA Transmittal",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhvbfc",
-    "WBS": "4.4.9",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh470b",
-    "Parent ID": "",
-    "Parent Task": "",
-    "Task Name": "Task 5: Community & Partner Engagement",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-06-01",
-    "Due Date": "2027-12-30",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh470b",
-    "WBS": "5",
-    "Level": 1
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh6vm6",
-    "Parent ID": "86bbh470b",
-    "Parent Task": "Task 5: Community & Partner Engagement",
-    "Task Name": "Kickoff & Initial Outreach",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-07-01",
-    "Due Date": "2026-08-31",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh6vm6",
-    "WBS": "5.1",
-    "Level": 2
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhvdbx",
-    "Parent ID": "86bbh470b",
-    "Parent Task": "Task 5: Community & Partner Engagement",
-    "Task Name": "Priorities & Tradeoffs",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-10-01",
-    "Due Date": "2026-12-31",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhvdbx",
-    "WBS": "5.2",
-    "Level": 2
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh6vqk",
-    "Parent ID": "86bbh470b",
-    "Parent Task": "Task 5: Community & Partner Engagement",
-    "Task Name": "Deep Listening",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-10-01",
-    "Due Date": "2026-12-15",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh6vqk",
-    "WBS": "5.3",
-    "Level": 2
-  },
-  {
-    "Project": "SMTP",
-    "WBS": "5.3.1",
-    "Level": 3,
-    "Task Name": "[South Central] Health Fair: Yakima Health Fair",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-10-17",
-    "Due Date": "2026-10-17",
-    "Assignees": "Wayne and WSDOT staff",
-    "Priority": "Normal",
-    "Tags": "Deep Listening Outreach",
-    "Parent Task": "Deep Listening",
-    "Task ID": "dl_event_01",
-    "Parent ID": "86bbh6vqk",
-    "Description": "Region: South Central | CBO / Partner: Yakima Valley Farm Workers Clinic | Activity: Health Fair | Location: Yakima, WA | Original Schedule Note: Saturday, October 17, 2026 | Staffing: Wayne and WSDOT staff | Roles: Tabling | Lead Time: 2-3 weeks | Registration Process: Confirmed | Estimated Budget: $5,000.00",
-    "Task Link": ""
-  },
-  {
-    "Project": "SMTP",
-    "WBS": "5.3.2",
-    "Level": 3,
-    "Task Name": "[South Central] Listening Session: Women of Wisdom",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-10-16",
-    "Due Date": "2026-10-18",
-    "Assignees": "Wayne, WSDOT staff, Transpo Group staff",
-    "Priority": "Normal",
-    "Tags": "Deep Listening Outreach",
-    "Parent Task": "Deep Listening",
-    "Task ID": "dl_event_02",
-    "Parent ID": "86bbh6vqk",
-    "Description": "Region: South Central | CBO / Partner: Women of Wisdom | Activity: Listening session | Location: Yakima, WA | Original Schedule Note: Friday, October 16 - Sunday, October 18 | Staffing: Wayne, WSDOT staff, Transpo Group staff | Roles: EI & WSDOT - support, Transpo Group - facilitator | Lead Time: 2-3 weeks | Registration Process: N/A",
-    "Task Link": ""
-  },
-  {
-    "Project": "SMTP",
-    "WBS": "5.3.3",
-    "Level": 3,
-    "Task Name": "[South Central] Listening Session: APIC Yakima (Asian Pacific Islander Coalition of Yakima County)",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-10-16",
-    "Due Date": "2026-10-18",
-    "Assignees": "Wayne, WSDOT staff, Transpo Group staff",
-    "Priority": "Normal",
-    "Tags": "Deep Listening Outreach",
-    "Parent Task": "Deep Listening",
-    "Task ID": "dl_event_03",
-    "Parent ID": "86bbh6vqk",
-    "Description": "Region: South Central | CBO / Partner: APIC Yakima (Asian Pacific Islander Coalition of Yakima County) | Activity: Listening session | Location: Yakima, WA | Original Schedule Note: Friday, October 16 - Sunday, October 18 | Staffing: Wayne, WSDOT staff, Transpo Group staff | Roles: EI & WSDOT - support, Transpo Group - facilitator | Lead Time: 2-3 weeks | Registration Process: N/A",
-    "Task Link": ""
-  },
-  {
-    "Project": "SMTP",
-    "WBS": "5.3.4",
-    "Level": 3,
-    "Task Name": "[Northwest] Monthly stakeholder engagement session: Porsesh",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-10-26",
-    "Due Date": "2026-10-26",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "Deep Listening Outreach",
-    "Parent Task": "Deep Listening",
-    "Task ID": "dl_event_04",
-    "Parent ID": "86bbh6vqk",
-    "Description": "Region: Northwest | CBO / Partner: Porsesh | Activity: Monthly stakeholder engagement session | Location: Virtual | Original Schedule Note: Monday, October 26, 2026 | Registration Process: confirm with event organizer",
-    "Task Link": ""
-  },
-  {
-    "Project": "SMTP",
-    "WBS": "5.3.5",
-    "Level": 3,
-    "Task Name": "[Northwest] Meeting - Heal Act grantees",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "2026-12-09",
-    "Due Date": "2026-12-09",
-    "Assignees": "WSDOT staff",
-    "Priority": "Normal",
-    "Tags": "Deep Listening Outreach",
-    "Parent Task": "Deep Listening",
-    "Task ID": "dl_event_05",
-    "Parent ID": "86bbh6vqk",
-    "Description": "Region: Northwest | CBO / Partner: Heal Act grantees | Original Schedule Note: Wednesday, December 9, 2026 | Staffing: WSDOT staff | Registration Process: confirm with event organizer",
-    "Task Link": ""
-  },
-  {
-    "Project": "SMTP",
-    "WBS": "5.3.6",
-    "Level": 3,
-    "Task Name": "[Northwest] Listening Session: Front and Centered - Latinx youth group",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "Deep Listening Outreach",
-    "Parent Task": "Deep Listening",
-    "Task ID": "dl_event_06",
-    "Parent ID": "86bbh6vqk",
-    "Description": "Region: Northwest | CBO / Partner: Front and Centered - Latinx youth group | Activity: Listening session | Location: Seattle, WA | Original Schedule Note: TBD | Registration Process: N/A",
-    "Task Link": ""
-  },
-  {
-    "Project": "SMTP",
-    "WBS": "5.3.7",
-    "Level": 3,
-    "Task Name": "[Northwest] Listening Session: Front and Centered - transportation advisory group",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "Deep Listening Outreach",
-    "Parent Task": "Deep Listening",
-    "Task ID": "dl_event_07",
-    "Parent ID": "86bbh6vqk",
-    "Description": "Region: Northwest | CBO / Partner: Front and Centered - transportation advisory group | Activity: Listening session | Location: Seattle, WA | Original Schedule Note: TBD | Registration Process: N/A",
-    "Task Link": ""
-  },
-  {
-    "Project": "SMTP",
-    "WBS": "5.3.8",
-    "Level": 3,
-    "Task Name": "[Northwest] Listening Session: WSCACL (Washington State Coaliation of African Community Leaders)",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "Deep Listening Outreach",
-    "Parent Task": "Deep Listening",
-    "Task ID": "dl_event_08",
-    "Parent ID": "86bbh6vqk",
-    "Description": "Region: Northwest | CBO / Partner: WSCACL (Washington State Coaliation of African Community Leaders) | Activity: Listening session | Location: Seattle, WA | Original Schedule Note: TBD | Registration Process: N/A",
-    "Task Link": ""
-  },
-  {
-    "Project": "SMTP",
-    "WBS": "5.3.9",
-    "Level": 3,
-    "Task Name": "[Southwest] Listening Session: Fourth Plane Forward",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "2026-12-05",
-    "Due Date": "2026-12-12",
-    "Assignees": "Wayne, Isaiah, Marisol",
-    "Priority": "Normal",
-    "Tags": "Deep Listening Outreach",
-    "Parent Task": "Deep Listening",
-    "Task ID": "dl_event_09",
-    "Parent ID": "86bbh6vqk",
-    "Description": "Region: Southwest | CBO / Partner: Fourth Plane Forward | Activity: Listening session | Location: Vancouver, WA | Original Schedule Note: Saturday, December 5 or Saturday December 12 | Staffing: Wayne, Isaiah, Marisol | Lead Time: 2-3 weeks | Registration Process: N/A | Estimated Budget: $8,200.00",
-    "Task Link": ""
-  },
-  {
-    "Project": "SMTP",
-    "WBS": "5.3.10",
-    "Level": 3,
-    "Task Name": "[Southwest] Outreach: Vancouver Downtown Farmer's Market",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "2026-12-05",
-    "Due Date": "2026-12-12",
-    "Assignees": "Wayne, Isaiah, Marisol",
-    "Priority": "Normal",
-    "Tags": "Deep Listening Outreach",
-    "Parent Task": "Deep Listening",
-    "Task ID": "dl_event_10",
-    "Parent ID": "86bbh6vqk",
-    "Description": "Region: Southwest | CBO / Partner: Vancouver Farmers Market | Activity: Farmers market | Location: Vancouver, WA | Original Schedule Note: Saturday, December 5 or Saturday December 12 | Staffing: Wayne, Isaiah, Marisol | Lead Time: 2-3 weeks",
-    "Task Link": ""
-  },
-  {
-    "Project": "SMTP",
-    "WBS": "5.3.11",
-    "Level": 3,
-    "Task Name": "[Eastern] Dia de los Muertos: ",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-11-02",
-    "Due Date": "2026-11-02",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "Deep Listening Outreach",
-    "Parent Task": "Deep Listening",
-    "Task ID": "dl_event_11",
-    "Parent ID": "86bbh6vqk",
-    "Description": "Region: Eastern | Activity: Dia de los Muertos | Location: TBD | Original Schedule Note: Monday, November 2, 2026 | Estimated Budget: $7,200.00",
-    "Task Link": ""
-  },
-  {
-    "Project": "SMTP",
-    "WBS": "5.3.12",
-    "Level": 3,
-    "Task Name": "[Olympic] Listening Session: Kitsap Black Student Union",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "Deep Listening Outreach",
-    "Parent Task": "Deep Listening",
-    "Task ID": "dl_event_12",
-    "Parent ID": "86bbh6vqk",
-    "Description": "Region: Olympic | CBO / Partner: Kitsap Black Student Union | Activity: Listening session | Location: Bremerton, WA | Original Schedule Note: TBD | Registration Process: N/A",
-    "Task Link": ""
-  },
-  {
-    "Project": "SMTP",
-    "WBS": "5.3.13",
-    "Level": 3,
-    "Task Name": "[Olympic] Listening Session: Mi Centro",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "Deep Listening Outreach",
-    "Parent Task": "Deep Listening",
-    "Task ID": "dl_event_13",
-    "Parent ID": "86bbh6vqk",
-    "Description": "Region: Olympic | CBO / Partner: Mi Centro | Activity: Listening session | Location: Tacoma, WA | Original Schedule Note: TBD | Registration Process: N/A",
-    "Task Link": ""
-  },
-  {
-    "Project": "SMTP",
-    "WBS": "5.3.14",
-    "Level": 3,
-    "Task Name": "[Olympic] Listening Session: TACID",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "Deep Listening Outreach",
-    "Parent Task": "Deep Listening",
-    "Task ID": "dl_event_14",
-    "Parent ID": "86bbh6vqk",
-    "Description": "Region: Olympic | CBO / Partner: TACID | Activity: Listening session | Location: Tacoma, WA | Original Schedule Note: TBD | Registration Process: N/A",
-    "Task Link": ""
-  },
-  {
-    "Project": "SMTP",
-    "WBS": "5.3.15",
-    "Level": 3,
-    "Task Name": "[North Central] Outreach: Wenatchee Cafe",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "Deep Listening Outreach",
-    "Parent Task": "Deep Listening",
-    "Task ID": "dl_event_15",
-    "Parent ID": "86bbh6vqk",
-    "Description": "Region: North Central | CBO / Partner: Wenatchee Cafe",
-    "Task Link": ""
-  },
-  {
-    "Project": "SMTP",
-    "WBS": "5.3.16",
-    "Level": 3,
-    "Task Name": "[North Central] Outreach: People for People - Working Together, Changing Lives",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "Deep Listening Outreach",
-    "Parent Task": "Deep Listening",
-    "Task ID": "dl_event_16",
-    "Parent ID": "86bbh6vqk",
-    "Description": "Region: North Central | CBO / Partner: People for People - Working Together, Changing Lives",
-    "Task Link": ""
-  },
-  {
-    "Project": "SMTP",
-    "WBS": "5.3.17",
-    "Level": 3,
-    "Task Name": "[North Central] Outreach: Okanogan County TN",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "Deep Listening Outreach",
-    "Parent Task": "Deep Listening",
-    "Task ID": "dl_event_17",
-    "Parent ID": "86bbh6vqk",
-    "Description": "Region: North Central | CBO / Partner: Okanogan County TN",
-    "Task Link": ""
-  },
-  {
-    "Project": "SMTP",
-    "WBS": "5.3.18",
-    "Level": 3,
-    "Task Name": "[North Central] Outreach: TREAD",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "Deep Listening Outreach",
-    "Parent Task": "Deep Listening",
-    "Task ID": "dl_event_18",
-    "Parent ID": "86bbh6vqk",
-    "Description": "Region: North Central | CBO / Partner: TREAD",
-    "Task Link": ""
-  },
-  {
-    "Project": "SMTP",
-    "WBS": "5.3.19",
-    "Level": 3,
-    "Task Name": "[North Central] Listening Session: Mi Centro",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "2026-11-17",
-    "Due Date": "2026-11-17",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "Deep Listening Outreach",
-    "Parent Task": "Deep Listening",
-    "Task ID": "dl_event_19",
-    "Parent ID": "86bbh6vqk",
-    "Description": "Region: North Central | CBO / Partner: Mi Centro | Activity: Listening session | Location: Leavenworth, WA | Original Schedule Note: 17-Nov",
-    "Task Link": ""
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhvdm2",
-    "Parent ID": "86bbh470b",
-    "Parent Task": "Task 5: Community & Partner Engagement",
-    "Task Name": "Feedback & Groundtruthing",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "2027-01-04",
-    "Due Date": "2027-02-26",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhvdm2",
-    "WBS": "5.4",
-    "Level": 2
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhvdty",
-    "Parent ID": "86bbh470b",
-    "Parent Task": "Task 5: Community & Partner Engagement",
-    "Task Name": "Finalization",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "2027-03-01",
-    "Due Date": "2027-05-28",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhvdty",
-    "WBS": "5.5",
-    "Level": 2
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh72n6",
-    "Parent ID": "",
-    "Parent Task": "",
-    "Task Name": "Meetings",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-05-01",
-    "Due Date": "2027-12-30",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh72n6",
-    "WBS": "6",
-    "Level": 1
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh790p",
-    "Parent ID": "86bbh72n6",
-    "Parent Task": "Meetings",
-    "Task Name": "SMTP Weekly PM Check In",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-05-04",
-    "Due Date": "2027-12-30",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh790p",
-    "WBS": "6.1",
-    "Level": 2
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh77ru",
-    "Parent ID": "86bbh72n6",
-    "Parent Task": "Meetings",
-    "Task Name": "SMTP Monthly (SPACE Team)",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-09-01",
-    "Due Date": "2027-12-30",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh77ru",
-    "WBS": "6.2",
-    "Level": 2
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh732v",
-    "Parent ID": "86bbh72n6",
-    "Parent Task": "Meetings",
-    "Task Name": "EAG Bi-Monthly",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-10-01",
-    "Due Date": "2027-12-30",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh732v",
-    "WBS": "6.3",
-    "Level": 2
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh427t",
-    "Parent ID": "",
-    "Parent Task": "",
-    "Task Name": "Task 3: Financial Assessment",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-09-01",
-    "Due Date": "2026-12-31",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "Task Order 1",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh427t",
-    "WBS": "7",
-    "Level": 1
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh4pqg",
-    "Parent ID": "86bbh427t",
-    "Parent Task": "Task 3: Financial Assessment",
-    "Task Name": "Revenue Forecasts",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-06-01",
-    "Due Date": "2026-09-18",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh4pqg",
-    "WBS": "7.1",
-    "Level": 2
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh4qey",
-    "Parent ID": "86bbh4pqg",
-    "Parent Task": "Revenue Forecasts",
-    "Task Name": "Draft Revenue Forecasting",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-06-01",
-    "Due Date": "2026-09-25",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh4qey",
-    "WBS": "7.1.1",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhppq7",
-    "Parent ID": "86bbh4pqg",
-    "Parent Task": "Revenue Forecasts",
-    "Task Name": "Revenue Forecast Revisions",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "2026-08-26",
-    "Due Date": "2026-08-31",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhppq7",
-    "WBS": "7.1.2",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhpkm5",
-    "Parent ID": "86bbh4pqg",
-    "Parent Task": "Revenue Forecasts",
-    "Task Name": "Initial WSDOT Review of Draft Revenue Forecast (Tim/Jeremy)",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "2026-08-25",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhpkm5",
-    "WBS": "7.1.3",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhr21f",
-    "Parent ID": "86bbh4pqg",
-    "Parent Task": "Revenue Forecasts",
-    "Task Name": "WSDOT Review of 2nd Revenue Forecast Draft",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "2026-08-31",
-    "Due Date": "2026-09-08",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhr21f",
-    "WBS": "7.1.4",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhr12b",
-    "Parent ID": "86bbh4pqg",
-    "Parent Task": "Revenue Forecasts",
-    "Task Name": "2nd Draft Revenue Forecast",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "2026-08-31",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhr12b",
-    "WBS": "7.1.5",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhpmnk",
-    "Parent ID": "86bbh4pqg",
-    "Parent Task": "Revenue Forecasts",
-    "Task Name": "Consolidated WSDOT Comments on Initial Draft Revenue Forecast",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "2026-08-21",
-    "Due Date": "2026-08-25",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhpmnk",
-    "WBS": "7.1.6",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhr2cy",
-    "Parent ID": "86bbh4pqg",
-    "Parent Task": "Revenue Forecasts",
-    "Task Name": "Final Revenue Revisions",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "2026-09-08",
-    "Due Date": "2026-09-18",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhr2cy",
-    "WBS": "7.1.7",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhpp95",
-    "Parent ID": "86bbh4pqg",
-    "Parent Task": "Revenue Forecasts",
-    "Task Name": "Initial Draft Revenue Forecast",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "2026-08-21",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhpp95",
-    "WBS": "7.1.8",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhpq2a",
-    "Parent ID": "86bbh4pqg",
-    "Parent Task": "Revenue Forecasts",
-    "Task Name": "Final Revenue Forecast",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhpq2a",
-    "WBS": "7.1.9",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh4pu8",
-    "Parent ID": "86bbh427t",
-    "Parent Task": "Task 3: Financial Assessment",
-    "Task Name": "Needs Analysis",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-07-01",
-    "Due Date": "2026-09-18",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh4pu8",
-    "WBS": "7.2",
-    "Level": 2
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh4vmx",
-    "Parent ID": "86bbh4pu8",
-    "Parent Task": "Needs Analysis",
-    "Task Name": "Data Request Spreadsheet",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-07-01",
-    "Due Date": "2026-07-15",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh4vmx",
-    "WBS": "7.2.1",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh4vyk",
-    "Parent ID": "86bbh4pu8",
-    "Parent Task": "Needs Analysis",
-    "Task Name": "Final Needs Assessment",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "2026-07-30",
-    "Due Date": "2026-09-18",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh4vyk",
-    "WBS": "7.2.2",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhpqwh",
-    "Parent ID": "86bbh4pu8",
-    "Parent Task": "Needs Analysis",
-    "Task Name": "WSDOT Review of Draft Needs Assessment",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "2026-09-25",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhpqwh",
-    "WBS": "7.2.3",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhpt2k",
-    "Parent ID": "86bbh4pu8",
-    "Parent Task": "Needs Analysis",
-    "Task Name": "WSDOT Direction on Needs Approach",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "2026-09-10",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhpt2k",
-    "WBS": "7.2.4",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh4vvz",
-    "Parent ID": "86bbh4pu8",
-    "Parent Task": "Needs Analysis",
-    "Task Name": "Draft Needs Assessment",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "2026-07-15",
-    "Due Date": "2026-09-11",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh4vvz",
-    "WBS": "7.2.5",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh4vrr",
-    "Parent ID": "86bbh4pu8",
-    "Parent Task": "Needs Analysis",
-    "Task Name": "Development of WSDOT-wide Needs",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "2026-07-01",
-    "Due Date": "2026-09-14",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh4vrr",
-    "WBS": "7.2.6",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh4q0h",
-    "Parent ID": "86bbh427t",
-    "Parent Task": "Task 3: Financial Assessment",
-    "Task Name": "Risk Analysis & Mitigation",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-07-01",
-    "Due Date": "2026-09-18",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh4q0h",
-    "WBS": "7.3",
-    "Level": 2
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh6abp",
-    "Parent ID": "86bbh4q0h",
-    "Parent Task": "Risk Analysis & Mitigation",
-    "Task Name": "Draft Risk Analysis",
-    "Task Type": "Milestone",
-    "Status": "In Progress",
-    "Start Date": "2026-08-01",
-    "Due Date": "2026-09-11",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh6abp",
-    "WBS": "7.3.1",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhr9ap",
-    "Parent ID": "86bbh4q0h",
-    "Parent Task": "Risk Analysis & Mitigation",
-    "Task Name": "WSDOT Review of 2nd Risk Analysis Draft",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "2026-09-08",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhr9ap",
-    "WBS": "7.3.2",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh6afg",
-    "Parent ID": "86bbh4q0h",
-    "Parent Task": "Risk Analysis & Mitigation",
-    "Task Name": "Initial WSDOT Review of Draft Risk Analysis (Tim/Jeremy)",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "2026-09-15",
-    "Due Date": "2026-09-15",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh6afg",
-    "WBS": "7.3.3",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh6drw",
-    "Parent ID": "86bbh4q0h",
-    "Parent Task": "Risk Analysis & Mitigation",
-    "Task Name": "Consolidated WSDOT Comments on Initial Risk Analysis",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "2026-09-15",
-    "Due Date": "2026-09-15",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh6drw",
-    "WBS": "7.3.4",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhra5e",
-    "Parent ID": "86bbh4q0h",
-    "Parent Task": "Risk Analysis & Mitigation",
-    "Task Name": "Final Risk Analysis",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "2026-09-18",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhra5e",
-    "WBS": "7.3.5",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbhr9zh",
-    "Parent ID": "86bbh4q0h",
-    "Parent Task": "Risk Analysis & Mitigation",
-    "Task Name": "Final Risk Revisions",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "2026-09-08",
-    "Due Date": "2026-09-18",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbhr9zh",
-    "WBS": "7.3.6",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh6dm0",
-    "Parent ID": "86bbh4q0h",
-    "Parent Task": "Risk Analysis & Mitigation",
-    "Task Name": "Risk Analysis Revisions",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "2026-09-15",
-    "Due Date": "2026-09-21",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh6dm0",
-    "WBS": "7.3.7",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbh6eud",
-    "Parent ID": "86bbh4q0h",
-    "Parent Task": "Risk Analysis & Mitigation",
-    "Task Name": "2nd Draft Risk Analysis",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "2026-09-16",
-    "Due Date": "2026-09-21",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh6eud",
-    "WBS": "7.3.8",
-    "Level": 3
-  },
-  {
-    "Project": "SMTP",
-    "Task ID": "86bbrng11",
-    "Parent ID": "",
-    "Parent Task": "",
-    "Task Name": "Untitled",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbrng11",
-    "WBS": "8",
-    "Level": 1
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbh2c88",
-    "Parent ID": "",
-    "Parent Task": "",
-    "Task Name": "TO1 - Task 3: Quick Start Activities",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-06-05",
-    "Due Date": "2026-08-31",
-    "Assignees": "Leslie Langley",
-    "Priority": "Normal",
-    "Tags": "Task Order 1",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh2c88",
-    "WBS": "1",
-    "Level": 1
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbh2z3k",
-    "Parent ID": "86bbh2c88",
-    "Parent Task": "TO1 - Task 3: Quick Start Activities",
-    "Task Name": "Final Converge/Divergence Memo",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-07-03",
-    "Due Date": "2026-07-31",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "Task Order 1",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh2z3k",
-    "WBS": "1.1",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbh2v7r",
-    "Parent ID": "86bbh2c88",
-    "Parent Task": "TO1 - Task 3: Quick Start Activities",
-    "Task Name": "Draft Converge/Divergence Memo",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-06-05",
-    "Due Date": "2026-07-03",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "Task Order 1",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh2v7r",
-    "WBS": "1.2",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbh2zw5",
-    "Parent ID": "86bbh2c88",
-    "Parent Task": "TO1 - Task 3: Quick Start Activities",
-    "Task Name": "SMTP/TCRS Combined Project Schedule",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-07-01",
-    "Due Date": "2026-09-18",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "Task Order 1",
-    "Description": "Combined SMTP and TCRS project schedule with convergence and divergence points detailed on the project timeline, along with key milestones.",
-    "Task Link": "https://app.clickup.com/t/86bbh2zw5",
-    "WBS": "1.3",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbh30vn",
-    "Parent ID": "86bbh2c88",
-    "Parent Task": "TO1 - Task 3: Quick Start Activities",
-    "Task Name": "VisionEval Meeting Materials and Summaries",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-07-15",
-    "Due Date": "2026-09-04",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "Task Order 1",
-    "Description": "Work with WSDOT to schedule, conduct, and summarize technical discussions with the WSDOT modeling team to coordinate on VisionEval capabilities, data availability and needs, desired outputs, and potential supplemental methods.",
-    "Task Link": "https://app.clickup.com/t/86bbh30vn",
-    "WBS": "1.4",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbh2c1f",
-    "Parent ID": "",
-    "Parent Task": "",
-    "Task Name": "TO1 - Task 2: Work Plan Dev",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-06-05",
-    "Due Date": "2026-08-31",
-    "Assignees": "Leslie Langley",
-    "Priority": "Normal",
-    "Tags": "Task Order 1",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh2c1f",
-    "WBS": "2",
-    "Level": 1
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbrr1gp",
-    "Parent ID": "86bbh2c1f",
-    "Parent Task": "TO1 - Task 2: Work Plan Dev",
-    "Task Name": "Update Budgets",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbrr1gp",
-    "WBS": "2.1",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbh2rh7",
-    "Parent ID": "86bbh2c1f",
-    "Parent Task": "TO1 - Task 2: Work Plan Dev",
-    "Task Name": "Draft Work Plan",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-06-05",
-    "Due Date": "2026-08-26",
-    "Assignees": "",
-    "Priority": "Urgent",
-    "Tags": "Task Order 1",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh2rh7",
-    "WBS": "2.2",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbh2ta2",
-    "Parent ID": "86bbh2c1f",
-    "Parent Task": "TO1 - Task 2: Work Plan Dev",
-    "Task Name": "Final Work Plan",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-08-26",
-    "Due Date": "2026-08-31",
-    "Assignees": "",
-    "Priority": "High",
-    "Tags": "Task Order 1",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh2ta2",
-    "WBS": "2.3",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbh2ckh",
-    "Parent ID": "",
-    "Parent Task": "",
-    "Task Name": "TO2 - Task 1: Data Synthesis and Trends Review",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-09-29",
-    "Due Date": "2026-10-30",
-    "Assignees": "Leslie Langley",
-    "Priority": "Normal",
-    "Tags": "Task Order 2",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh2ckh",
-    "WBS": "3",
-    "Level": 1
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbh3a51",
-    "Parent ID": "86bbh2ckh",
-    "Parent Task": "TO2 - Task 1: Data Synthesis and Trends Review",
-    "Task Name": "Modeling Tools Review",
-    "Task Type": "Deliverable",
-    "Status": "In Progress",
-    "Start Date": "2026-10-06",
-    "Due Date": "2026-10-23",
-    "Assignees": "Leslie Langley",
-    "Priority": "Normal",
-    "Tags": "Task Order 2",
-    "Description": "Comparative summary of capabilities and level of effort of tools addressing policies outside  VisionEval.\\n\\nModeling tools review. Based on WSDOT modeling\u2019s analysis of VisionEval\u2019s capabilities and limitations, Transpo will compile a comparative summary of the capabilities and level of effort of tools that may address policies and investments that VisionEval cannot address. This summary will help guide which policies can be evaluated under the project timeline and which may need future attention.",
-    "Task Link": "https://app.clickup.com/t/86bbh3a51",
-    "WBS": "3.1",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbqy9wk",
-    "Parent ID": "86bbh3a51",
-    "Parent Task": "Modeling Tools Review",
-    "Task Name": "Meeting to review postprocessing tools",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-09-28",
-    "Due Date": "2026-10-09",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbqy9wk",
-    "WBS": "3.1.1",
-    "Level": 3
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbh398v",
-    "Parent ID": "86bbh3a51",
-    "Parent Task": "Modeling Tools Review",
-    "Task Name": "Modeling and Supporting Tools Capabilities Summary",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "2026-10-15",
-    "Due Date": "2026-10-30",
-    "Assignees": "Leslie Langley",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh398v",
-    "WBS": "3.1.2",
-    "Level": 3
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bch8emt",
-    "Parent ID": "86bbh2ckh",
-    "Parent Task": "TO2 - Task 1: Data Synthesis and Trends Review",
-    "Task Name": "Carbon Reduction Measures Review",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "",
-    "Due Date": "2026-10-30",
-    "Assignees": "Leslie Langley",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bch8emt",
-    "WBS": "3.2",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bch8f27",
-    "Parent ID": "86bch8emt",
-    "Parent Task": "Carbon Reduction Measures Review",
-    "Task Name": "Carbon Reduction Measures Review Summary",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "2026-10-30",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Carbon Reduction Measures Review. Transpo will review the 2023 TCRS and suggest additional carbon reduction measures (based on the policy and best practices reviews above) that could be considered in this TCRS update. Steps to include:\u00a0\\nReview of:\u00a0\\n2023 Policies\u00a0\\nAdditional policies/measures identified by WSDOT or that are new since 2023\u00a0\\nPolicies/measures identified in local and regional plans\u00a0\\nEngagement:\u00a0\\nTranspo will coordinate closely with the SMTP engagement team to review compiled findings with MPOs and RTPOs in a way that avoids meeting/participation fatigue and allows us to meet the needs of this TCRS\u00a0\\nShare compiled findings for review by MPOs and RTPOs with request to help narrow focus",
-    "Task Link": "https://app.clickup.com/t/86bch8f27",
-    "WBS": "3.2.1",
-    "Level": 3
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbh3aj8",
-    "Parent ID": "86bbh2ckh",
-    "Parent Task": "TO2 - Task 1: Data Synthesis and Trends Review",
-    "Task Name": "VisionEval Data Needs Support",
-    "Task Type": "Deliverable",
-    "Status": "In Progress",
-    "Start Date": "2026-10-06",
-    "Due Date": "2026-10-30",
-    "Assignees": "Leslie Langley",
-    "Priority": "Normal",
-    "Tags": "Task Order 2",
-    "Description": "Summary focused on filling data gaps to support VisionEval implementation.\\n\\nVisionEval data needs support: The WSDOT modeling team will lead the development of the data plan to support the set up and execution of VisionEval and identify data gaps. Transpo will coordinate with WSDOT staff to support in gathering identified data inputs necessary for VisionEval Baseline and Scenario runs. Transpo will work with WSDOT if any data gaps are identified and will support developing strategies to reconcile them. Transpo will summarize the findings in a data needs summary memo to supplement the data plan.",
-    "Task Link": "https://app.clickup.com/t/86bbh3aj8",
-    "WBS": "3.3",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbh39ky",
-    "Parent ID": "86bbh3aj8",
-    "Parent Task": "VisionEval Data Needs Support",
-    "Task Name": "VisionEval data gaps summary",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "2026-10-19",
-    "Due Date": "2026-10-30",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh39ky",
-    "WBS": "3.3.1",
-    "Level": 3
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbh39v1",
-    "Parent ID": "86bbh2ckh",
-    "Parent Task": "TO2 - Task 1: Data Synthesis and Trends Review",
-    "Task Name": "Data Synthesis & Trends Memo (Draft & Final)",
-    "Task Type": "Deliverable",
-    "Status": "In Progress",
-    "Start Date": "2026-09-29",
-    "Due Date": "2026-10-31",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "Task Order 2",
-    "Description": "Summarizes policy reviews, carbon market updates, trends/best practices, and policy baseline findings.\\n\\nPolicy review. Transpo will review policies and key studies completed since the adoption of the 2023 TCRS, including transportation, housing, land use, and other efforts underway or implemented by WSDOT and regional and local partners. Transpo will also summarize the status and implications of the linked Western Carbon markets (Washington, California, and Oregon).\u00a0\\nTrends & best practices review. Transpo will summarize trends and best practices in carbon reduction strategies, paying particular attention to technology changes, such as alternative fuels, smart city infrastructure, AI adoption, and advanced telecommuting. This review will be tightly coordinated with the trends analysis being conducted as part of the SMTP to ensure consistency.",
-    "Task Link": "https://app.clickup.com/t/86bbh39v1",
-    "WBS": "3.4",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbh37x7",
-    "Parent ID": "86bbh39v1",
-    "Parent Task": "Data Synthesis & Trends Memo (Draft & Final)",
-    "Task Name": "Draft Data Synthesis & Trends Memo",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-09-29",
-    "Due Date": "2026-10-16",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "Task Order 2",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh37x7",
-    "WBS": "3.4.1",
-    "Level": 3
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbh38vd",
-    "Parent ID": "86bbh39v1",
-    "Parent Task": "Data Synthesis & Trends Memo (Draft & Final)",
-    "Task Name": "Final Data Synthesis & Trends Memo",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "2026-09-29",
-    "Due Date": "2026-10-30",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "Task Order 2",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh38vd",
-    "WBS": "3.4.2",
-    "Level": 3
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbr25kr",
-    "Parent ID": "",
-    "Parent Task": "",
-    "Task Name": "TO2 - Task 2. VisionEval Support & Baseline Analysis",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-09-29",
-    "Due Date": "2027-01-29",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "Task Order 2",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbr25kr",
-    "WBS": "4",
-    "Level": 1
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bcdu41g",
-    "Parent ID": "86bbr25kr",
-    "Parent Task": "TO2 - Task 2. VisionEval Support & Baseline Analysis",
-    "Task Name": "Data Collection",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-10-01",
-    "Due Date": "2026-11-04",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bcdu41g",
-    "WBS": "4.1",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bcdu48w",
-    "Parent ID": "86bbr25kr",
-    "Parent Task": "TO2 - Task 2. VisionEval Support & Baseline Analysis",
-    "Task Name": "Baseline Run",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "",
-    "Due Date": "2026-11-30",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bcdu48w",
-    "WBS": "4.2",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bca02hf",
-    "Parent ID": "86bbr25kr",
-    "Parent Task": "TO2 - Task 2. VisionEval Support & Baseline Analysis",
-    "Task Name": "Transpo Developed Scripts & Documentation",
-    "Task Type": "Deliverable",
-    "Status": "In Progress",
-    "Start Date": "2026-11-30",
-    "Due Date": "2027-01-29",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Sharing R/Python scripts and code used to develop, support, or enhance VE-State model with training material.",
-    "Task Link": "https://app.clickup.com/t/86bca02hf",
-    "WBS": "4.3",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bcaa83m",
-    "Parent ID": "86bca02hf",
-    "Parent Task": "Transpo Developed Scripts & Documentation",
-    "Task Name": "Advisory Committee Engagement",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "",
-    "Due Date": "",
-    "Assignees": "Leslie Langley",
-    "Priority": "Urgent",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bcaa83m",
-    "WBS": "4.3.1",
-    "Level": 3
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bca02ew",
-    "Parent ID": "86bbr25kr",
-    "Parent Task": "TO2 - Task 2. VisionEval Support & Baseline Analysis",
-    "Task Name": "Decision Point 3: Task 3 Approach Agreement",
-    "Task Type": "Decision Point",
-    "Status": "In Progress",
-    "Start Date": "2027-01-05",
-    "Due Date": "2027-01-29",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "WSDOT teams and Transpo agree on approach for Task 3, considering level of effort.",
-    "Task Link": "https://app.clickup.com/t/86bca02ew",
-    "WBS": "4.4",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bch8kxh",
-    "Parent ID": "86bbr25kr",
-    "Parent Task": "TO2 - Task 2. VisionEval Support & Baseline Analysis",
-    "Task Name": "Internal Review Dashboard",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "",
-    "Due Date": "2027-01-29",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bch8kxh",
-    "WBS": "4.5",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bca02eb",
-    "Parent ID": "86bbr25kr",
-    "Parent Task": "TO2 - Task 2. VisionEval Support & Baseline Analysis",
-    "Task Name": "Decision Point 1: Modeling Approach Agreement",
-    "Task Type": "Decision Point",
-    "Status": "To Do",
-    "Start Date": "2026-10-20",
-    "Due Date": "2026-10-27",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "WSDOT and Transpo agree on VisionEval improvements, overall modeling approach, and data documentation.\\nArea types modeling: urban suburban, rural and regional?\\nreview for possibilities on modeling effort\\ncompare to other WSDOT plans",
-    "Task Link": "https://app.clickup.com/t/86bca02eb",
-    "WBS": "4.6",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bca02fa",
-    "Parent ID": "86bbr25kr",
-    "Parent Task": "TO2 - Task 2. VisionEval Support & Baseline Analysis",
-    "Task Name": "Methodology Decision Memo",
-    "Task Type": "Deliverable",
-    "Status": "To Do",
-    "Start Date": "2026-10-28",
-    "Due Date": "2026-11-06",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Documents decisions on off-model calculations, probability-based GHG modeling, and modeling framework.",
-    "Task Link": "https://app.clickup.com/t/86bca02fa",
-    "WBS": "4.7",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bca02ek",
-    "Parent ID": "86bbr25kr",
-    "Parent Task": "TO2 - Task 2. VisionEval Support & Baseline Analysis",
-    "Task Name": "Decision Point 2: Baseline Validation Agreement",
-    "Task Type": "Decision Point",
-    "Status": "To Do",
-    "Start Date": "2026-12-01",
-    "Due Date": "2026-12-08",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "WSDOT teams and Transpo agree on baseline validation approach before proceeding.",
-    "Task Link": "https://app.clickup.com/t/86bca02ek",
-    "WBS": "4.8",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bca02fn",
-    "Parent ID": "86bbr25kr",
-    "Parent Task": "TO2 - Task 2. VisionEval Support & Baseline Analysis",
-    "Task Name": "VisionEval Technical Documentation",
-    "Task Type": "Deliverable",
-    "Status": "To Do",
-    "Start Date": "2026-10-01",
-    "Due Date": "2027-01-29",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Technical documentation covering scenario development, validation, and evaluation.\\nTranspoGroup to support with revision and edits.",
-    "Task Link": "https://app.clickup.com/t/86bca02fn",
-    "WBS": "4.9",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbr25q3",
-    "Parent ID": "",
-    "Parent Task": "",
-    "Task Name": "TO2 - Task 4. Engagement",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-10-06",
-    "Due Date": "2027-10-29",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "Task Order 2",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbr25q3",
-    "WBS": "5",
-    "Level": 1
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbtnfvr",
-    "Parent ID": "86bbr25q3",
-    "Parent Task": "TO2 - Task 4. Engagement",
-    "Task Name": "set up Freight focused call w/Jim",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-10-14",
-    "Due Date": "2026-10-14",
-    "Assignees": "Leslie Langley",
-    "Priority": "High",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbtnfvr",
-    "WBS": "5.1",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzvn",
-    "Parent ID": "86bbr25q3",
-    "Parent Task": "TO2 - Task 4. Engagement",
-    "Task Name": "TCRS Outreach Plan and Targeted Materials",
-    "Task Type": "Deliverable",
-    "Status": "To Do",
-    "Start Date": "2026-09-29",
-    "Due Date": "2026-11-21",
-    "Assignees": "Jim Brogan,Leslie Langley",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Outreach plan, presentation materials, meeting notes, and interview questions.",
-    "Task Link": "https://app.clickup.com/t/86bc9zzvn",
-    "WBS": "5.2",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bch8njh",
-    "Parent ID": "86bc9zzvn",
-    "Parent Task": "TCRS Outreach Plan and Targeted Materials",
-    "Task Name": "Draft Outreach Plan",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-10-01",
-    "Due Date": "2026-10-20",
-    "Assignees": "Leslie Langley",
-    "Priority": "Urgent",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bch8njh",
-    "WBS": "5.2.1",
-    "Level": 3
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bch8ny4",
-    "Parent ID": "86bc9zzvn",
-    "Parent Task": "TCRS Outreach Plan and Targeted Materials",
-    "Task Name": "Final Outreach Plan",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "2026-10-28",
-    "Due Date": "2026-11-03",
-    "Assignees": "Leslie Langley",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bch8ny4",
-    "WBS": "5.2.2",
-    "Level": 3
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bch8nkg",
-    "Parent ID": "86bc9zzvn",
-    "Parent Task": "TCRS Outreach Plan and Targeted Materials",
-    "Task Name": "WSDOT review of Draft Outreach Plan",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "2026-10-21",
-    "Due Date": "2026-10-27",
-    "Assignees": "Leslie Langley",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bch8nkg",
-    "WBS": "5.2.3",
-    "Level": 3
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bch8vg0",
-    "Parent ID": "86bbr25q3",
-    "Parent Task": "TO2 - Task 4. Engagement",
-    "Task Name": "Advisory Committee Engagement",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "2026-10-01",
-    "Due Date": "2027-12-31",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bch8vg0",
-    "WBS": "5.3",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bcaa70q",
-    "Parent ID": "86bch8vg0",
-    "Parent Task": "Advisory Committee Engagement",
-    "Task Name": "Advisory Committee Input on Scenarios",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "2026-12-01",
-    "Due Date": "2026-12-19",
-    "Assignees": "",
-    "Priority": "High",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bcaa70q",
-    "WBS": "5.3.1",
-    "Level": 3
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bcaa7h2",
-    "Parent ID": "86bch8vg0",
-    "Parent Task": "Advisory Committee Engagement",
-    "Task Name": "Advisory Committee Input - Value Prop",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "2026-10-12",
-    "Due Date": "2026-10-26",
-    "Assignees": "",
-    "Priority": "High",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bcaa7h2",
-    "WBS": "5.3.2",
-    "Level": 3
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bckpwd3",
-    "Parent ID": "86bcaa7h2",
-    "Parent Task": "Advisory Committee Input - Value Prop",
-    "Task Name": "draft value prop definitions",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "",
-    "Due Date": "2026-10-15",
-    "Assignees": "Leslie Langley",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bckpwd3",
-    "WBS": "5.3.2.1",
-    "Level": 4
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzvm",
-    "Parent ID": "86bbr25q3",
-    "Parent Task": "TO2 - Task 4. Engagement",
-    "Task Name": "Decision Point 7: TCRS Outreach Plan Approval",
-    "Task Type": "Decision Point",
-    "Status": "To Do",
-    "Start Date": "2026-10-31",
-    "Due Date": "2026-10-31",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "TCRS outreach plan implemented after WSDOT approval.",
-    "Task Link": "https://app.clickup.com/t/86bc9zzvm",
-    "WBS": "5.4",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzvv",
-    "Parent ID": "86bbr25q3",
-    "Parent Task": "TO2 - Task 4. Engagement",
-    "Task Name": "Compiled TCRS Engagement Memo (508 Compliant)",
-    "Task Type": "Deliverable",
-    "Status": "To Do",
-    "Start Date": "2026-10-06",
-    "Due Date": "2027-10-29",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Full compilation of outreach activities, feedback tabulations, and integration notes.",
-    "Task Link": "https://app.clickup.com/t/86bc9zzvv",
-    "WBS": "5.5",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzvt",
-    "Parent ID": "86bbr25q3",
-    "Parent Task": "TO2 - Task 4. Engagement",
-    "Task Name": "Presentations and Meeting Summaries",
-    "Task Type": "Deliverable",
-    "Status": "To Do",
-    "Start Date": "2026-10-06",
-    "Due Date": "2027-10-15",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Documentation of meetings with MPOs/RTPOs, Tribes, freight industry, and advisory committee.",
-    "Task Link": "https://app.clickup.com/t/86bc9zzvt",
-    "WBS": "5.6",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzvr",
-    "Parent ID": "86bbr25q3",
-    "Parent Task": "TO2 - Task 4. Engagement",
-    "Task Name": "Public Survey Questionnaire and Response Summary",
-    "Task Type": "Deliverable",
-    "Status": "To Do",
-    "Start Date": "2026-10-06",
-    "Due Date": "2027-09-03",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Survey tool and aggregated public feedback summary by outreach community type.",
-    "Task Link": "https://app.clickup.com/t/86bc9zzvr",
-    "WBS": "5.7",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbh2brd",
-    "Parent ID": "",
-    "Parent Task": "",
-    "Task Name": "TO1 - Task 1: Management and Admin",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-06-05",
-    "Due Date": "2027-12-30",
-    "Assignees": "Leslie Langley",
-    "Priority": "Normal",
-    "Tags": "Task Order 1",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh2brd",
-    "WBS": "6",
-    "Level": 1
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbh2h7y",
-    "Parent ID": "86bbh2brd",
-    "Parent Task": "TO1 - Task 1: Management and Admin",
-    "Task Name": "Final Approach and Methodology",
-    "Task Type": "Task",
-    "Status": "Complete",
-    "Start Date": "2026-06-05",
-    "Due Date": "2026-06-15",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh2h7y",
-    "WBS": "6.1",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbh2hdq",
-    "Parent ID": "86bbh2brd",
-    "Parent Task": "TO1 - Task 1: Management and Admin",
-    "Task Name": "Biweekly Meeting Agendas and Note",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-06-05",
-    "Due Date": "2027-12-30",
-    "Assignees": "Leslie Langley",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh2hdq",
-    "WBS": "6.2",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbh2q3y",
-    "Parent ID": "86bbh2brd",
-    "Parent Task": "TO1 - Task 1: Management and Admin",
-    "Task Name": "Monthly Invoices and Progress Reports",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-06-05",
-    "Due Date": "2027-12-30",
-    "Assignees": "",
-    "Priority": "High",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh2q3y",
-    "WBS": "6.3",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbh7erh",
-    "Parent ID": "",
-    "Parent Task": "",
-    "Task Name": "Meetings",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-07-08",
-    "Due Date": "2026-12-30",
-    "Assignees": "Leslie Langley",
-    "Priority": "Normal",
-    "Tags": "Task Order 1, Task Order 2",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh7erh",
-    "WBS": "7",
-    "Level": 1
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbh7eux",
-    "Parent ID": "86bbh7erh",
-    "Parent Task": "Meetings",
-    "Task Name": "TCRS Bi-weekly",
-    "Task Type": "Task",
-    "Status": "In Progress",
-    "Start Date": "2026-07-08",
-    "Due Date": "2027-12-30",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbh7eux",
-    "WBS": "7.1",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbr25rf",
-    "Parent ID": "",
-    "Parent Task": "",
-    "Task Name": "TO2 - Task 5. MTES Finalization & Reporting",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "2027-03-01",
-    "Due Date": "2027-12-31",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "Task Order 2",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbr25rf",
-    "WBS": "8",
-    "Level": 1
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzwr",
-    "Parent ID": "86bbr25rf",
-    "Parent Task": "TO2 - Task 5. MTES Finalization & Reporting",
-    "Task Name": "Companion Slide Deck",
-    "Task Type": "Deliverable",
-    "Status": "To Do",
-    "Start Date": "2027-03-01",
-    "Due Date": "2027-12-31",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Executive slide   deck framing TCRS within WSDOT Family of Plans and outlining its intended   use.",
-    "Task Link": "https://app.clickup.com/t/86bc9zzwr",
-    "WBS": "8.1",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzwu",
-    "Parent ID": "86bbr25rf",
-    "Parent Task": "TO2 - Task 5. MTES Finalization & Reporting",
-    "Task Name": "Project Closeout",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "2027-12-01",
-    "Due Date": "2027-12-31",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Final contract   closeout activities.",
-    "Task Link": "https://app.clickup.com/t/86bc9zzwu",
-    "WBS": "8.2",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzwn",
-    "Parent ID": "86bbr25rf",
-    "Parent Task": "TO2 - Task 5. MTES Finalization & Reporting",
-    "Task Name": "Project Webpage WCAG Compliant Materials",
-    "Task Type": "Deliverable",
-    "Status": "To Do",
-    "Start Date": "2027-03-01",
-    "Due Date": "2027-12-31",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Digital assets,   summary fact sheets, model outcome graphics, survey materials, and web   content.",
-    "Task Link": "https://app.clickup.com/t/86bc9zzwn",
-    "WBS": "8.3",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzwp",
-    "Parent ID": "86bbr25rf",
-    "Parent Task": "TO2 - Task 5. MTES Finalization & Reporting",
-    "Task Name": "Final 2027 TCRS Project Report",
-    "Task Type": "Deliverable",
-    "Status": "To Do",
-    "Start Date": "2027-12-01",
-    "Due Date": "2027-12-31",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Definitive   technical record documenting modeling, assumptions, calibration, and   findings.",
-    "Task Link": "https://app.clickup.com/t/86bc9zzwp",
-    "WBS": "8.4",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzw7",
-    "Parent ID": "86bbr25rf",
-    "Parent Task": "TO2 - Task 5. MTES Finalization & Reporting",
-    "Task Name": "FHWA Revisions Review with WSDOT",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "2027-06-01",
-    "Due Date": "2027-06-30",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Review revisions resulting from FHWA review with WSDOT.",
-    "Task Link": "https://app.clickup.com/t/86bc9zzw7",
-    "WBS": "8.5",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzvy",
-    "Parent ID": "86bbr25rf",
-    "Parent Task": "TO2 - Task 5. MTES Finalization & Reporting",
-    "Task Name": "MTES Recommendations",
-    "Task Type": "Deliverable",
-    "Status": "To Do",
-    "Start Date": "2027-03-01",
-    "Due Date": "2027-12-31",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Finalized   multimodal transportation efficiency recommendations for incorporation into   the SMTP.",
-    "Task Link": "https://app.clickup.com/t/86bc9zzvy",
-    "WBS": "8.6",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzw5",
-    "Parent ID": "86bbr25rf",
-    "Parent Task": "TO2 - Task 5. MTES Finalization & Reporting",
-    "Task Name": "Draft 2027 TCRS Update Review with WSDOT",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "2027-04-01",
-    "Due Date": "2027-04-30",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Internal review of   the full draft TCRS update by WSDOT project team.",
-    "Task Link": "https://app.clickup.com/t/86bc9zzw5",
-    "WBS": "8.7",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzw6",
-    "Parent ID": "86bbr25rf",
-    "Parent Task": "TO2 - Task 5. MTES Finalization & Reporting",
-    "Task Name": "Initial Pre-Public Draft Review with FHWA",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "2027-05-01",
-    "Due Date": "2027-05-29",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Submission and review of pre-public draft version with FHWA.",
-    "Task Link": "https://app.clickup.com/t/86bc9zzw6",
-    "WBS": "8.8",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzw1",
-    "Parent ID": "86bbr25rf",
-    "Parent Task": "TO2 - Task 5. MTES Finalization & Reporting",
-    "Task Name": "Outline Review with WSDOT",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "2027-03-12",
-    "Due Date": "2027-03-12",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Initial draft   outline review of the TCRS Update with WSDOT staff.",
-    "Task Link": "https://app.clickup.com/t/86bc9zzw1",
-    "WBS": "8.9",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzwd",
-    "Parent ID": "86bbr25rf",
-    "Parent Task": "TO2 - Task 5. MTES Finalization & Reporting",
-    "Task Name": "WSDOT Leadership & Govt Affairs Review",
-    "Task Type": "Deliverable",
-    "Status": "To Do",
-    "Start Date": "2027-09-01",
-    "Due Date": "2027-10-29",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Internal evaluation draft reviewed by WSDOT leadership and Government Affairs Office.",
-    "Task Link": "https://app.clickup.com/t/86bc9zzwd",
-    "WBS": "8.10",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzw0",
-    "Parent ID": "86bbr25rf",
-    "Parent Task": "TO2 - Task 5. MTES Finalization & Reporting",
-    "Task Name": "Outline Review with FHWA",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "2027-03-31",
-    "Due Date": "2027-03-31",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Review of TCRS   update draft outline with FHWA.",
-    "Task Link": "https://app.clickup.com/t/86bc9zzw0",
-    "WBS": "8.11",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzwf",
-    "Parent ID": "86bbr25rf",
-    "Parent Task": "TO2 - Task 5. MTES Finalization & Reporting",
-    "Task Name": "Draft 2027 TCRS Project Report",
-    "Task Type": "Deliverable",
-    "Status": "To Do",
-    "Start Date": "2027-11-01",
-    "Due Date": "2027-11-30",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Draft technical companion report documenting analytical approaches, modeling, and engagement.",
-    "Task Link": "https://app.clickup.com/t/86bc9zzwf",
-    "WBS": "8.12",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzwj",
-    "Parent ID": "86bbr25rf",
-    "Parent Task": "TO2 - Task 5. MTES Finalization & Reporting",
-    "Task Name": "Final 2027 TCRS Update Submittal to FHWA",
-    "Task Type": "Milestone",
-    "Status": "To Do",
-    "Start Date": "2027-11-15",
-    "Due Date": "2027-11-15",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Final submittal meeting statutory requirements submitted to FHWA for certification.",
-    "Task Link": "https://app.clickup.com/t/86bc9zzwj",
-    "WBS": "8.13",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzwe",
-    "Parent ID": "86bbr25rf",
-    "Parent Task": "TO2 - Task 5. MTES Finalization & Reporting",
-    "Task Name": "Draft 2027 TCRS Update for Public Engagement",
-    "Task Type": "Deliverable",
-    "Status": "To Do",
-    "Start Date": "2027-04-01",
-    "Due Date": "2027-04-30",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bc9zzwe",
-    "WBS": "8.14",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bbr25nw",
-    "Parent ID": "",
-    "Parent Task": "",
-    "Task Name": "TO2 - Task 3. Strategy Development & Scenario Testing",
-    "Task Type": "Task",
-    "Status": "To Do",
-    "Start Date": "2026-11-03",
-    "Due Date": "2027-04-30",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "Task Order 2",
-    "Description": "",
-    "Task Link": "https://app.clickup.com/t/86bbr25nw",
-    "WBS": "9",
-    "Level": 1
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzvf",
-    "Parent ID": "86bbr25nw",
-    "Parent Task": "TO2 - Task 3. Strategy Development & Scenario Testing",
-    "Task Name": "Scenario Development Technical Documentation",
-    "Task Type": "Deliverable",
-    "Status": "To Do",
-    "Start Date": "2027-02-23",
-    "Due Date": "2027-02-25",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Detailed technical documentation of scenario modeling, elasticity validation, and sensitivity   testing.",
-    "Task Link": "https://app.clickup.com/t/86bc9zzvf",
-    "WBS": "9.1",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzv6",
-    "Parent ID": "86bbr25nw",
-    "Parent Task": "TO2 - Task 3. Strategy Development & Scenario Testing",
-    "Task Name": "Decision Point 5: Additional Analysis Approval",
-    "Task Type": "Decision Point",
-    "Status": "To Do",
-    "Start Date": "2026-11-17",
-    "Due Date": "2026-12-11",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Additional scenario analysis approved by WSDOT project management.",
-    "Task Link": "https://app.clickup.com/t/86bc9zzv6",
-    "WBS": "9.2",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzv7",
-    "Parent ID": "86bbr25nw",
-    "Parent Task": "TO2 - Task 3. Strategy Development & Scenario Testing",
-    "Task Name": "Decision Point 6: Scenario Validation Agreement",
-    "Task Type": "Decision Point",
-    "Status": "To Do",
-    "Start Date": "2026-12-15",
-    "Due Date": "2027-01-22",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "WSDOT and Transpo agree on scenario validation approach before implementation.",
-    "Task Link": "https://app.clickup.com/t/86bc9zzv7",
-    "WBS": "9.3",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzv5",
-    "Parent ID": "86bbr25nw",
-    "Parent Task": "TO2 - Task 3. Strategy Development & Scenario Testing",
-    "Task Name": "Decision Point 4: Scenario List Approval",
-    "Task Type": "Decision Point",
-    "Status": "To Do",
-    "Start Date": "2026-11-03",
-    "Due Date": "2026-12-04",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Final list of scenarios approved by WSDOT project management.",
-    "Task Link": "https://app.clickup.com/t/86bc9zzv5",
-    "WBS": "9.4",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzvb",
-    "Parent ID": "86bbr25nw",
-    "Parent Task": "TO2 - Task 3. Strategy Development & Scenario Testing",
-    "Task Name": "Scenario List (Draft & Final)",
-    "Task Type": "Deliverable",
-    "Status": "To Do",
-    "Start Date": "2026-11-03",
-    "Due Date": "2027-02-05",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Hybrid scenario development framework combining top-down policy bundling and bottom-up   screening.",
-    "Task Link": "https://app.clickup.com/t/86bc9zzvb",
-    "WBS": "9.5",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzve",
-    "Parent ID": "86bbr25nw",
-    "Parent Task": "TO2 - Task 3. Strategy Development & Scenario Testing",
-    "Task Name": "Scenario Results and Summary",
-    "Task Type": "Deliverable",
-    "Status": "To Do",
-    "Start Date": "2027-02-01",
-    "Due Date": "2027-02-27",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Summary of VisionEval and off-model scenario runs and recommended actions.",
-    "Task Link": "https://app.clickup.com/t/86bc9zzve",
-    "WBS": "9.6",
-    "Level": 2
-  },
-  {
-    "Project": "TCRS",
-    "Task ID": "86bc9zzvj",
-    "Parent ID": "86bbr25nw",
-    "Parent Task": "TO2 - Task 3. Strategy Development & Scenario Testing",
-    "Task Name": "Multimodal Transportation Efficiency Strategy Analysis",
-    "Task Type": "Deliverable",
-    "Status": "To Do",
-    "Start Date": "2027-03-29",
-    "Due Date": "2027-04-30",
-    "Assignees": "",
-    "Priority": "Normal",
-    "Tags": "",
-    "Description": "Context-specific analysis (urban, suburban, rural, travel types, inter-city rail, freight, VMT   energy cost).",
-    "Task Link": "https://app.clickup.com/t/86bc9zzvj",
-    "WBS": "9.7",
     "Level": 2
   }
 ];
@@ -4530,7 +1522,7 @@
     // State
     let tasks = [];
     let showingBaselineTimeline = false;
-    let activeProject = "ALL"; // "ALL", "SMTP", "TCRS"
+    let activeProject = "ALL";
     let currentZoom = "month"; // "quarter", "month", "week"
     let collapsedSet = new Set(); // set of parent Task IDs currently collapsed
     let selectedTaskId = null;
@@ -4552,8 +1544,8 @@
     };
 
     // Project timeline bounds: May 1, 2026 to Dec 31, 2027
-    const TIMELINE_START = new Date("2026-04-15T00:00:00");
-    const TIMELINE_END = new Date("2028-01-15T00:00:00");
+    const TIMELINE_START = new Date("2026-01-01T00:00:00");
+    const TIMELINE_END = new Date("2027-01-01T00:00:00");
     const TODAY = new Date(); // Tracks the actual current date
 
     // Initialize application
@@ -4607,7 +1599,7 @@
             tasks = data.tasks;
             lastKnownServerMtime = data.mtime;
             render();
-            showToast("Synced with SMTP_TCRS_Schedule.xlsx on disk!");
+            showToast("Synced with the schedule on disk!");
           }
         }
       } catch (err) {
@@ -4632,7 +1624,7 @@
 
     // Load tasks from localStorage or baseline
     function loadSavedTasks() {
-      const saved = localStorage.getItem("smtp_tcrs_schedule_data");
+      const saved = localStorage.getItem("gantt_schedule_sample_project_plan");
       if (saved) {
         try {
           tasks = JSON.parse(saved);
@@ -4647,7 +1639,7 @@
 
     async function saveTasks() {
       // Always save to browser localStorage
-      localStorage.setItem("smtp_tcrs_schedule_data", JSON.stringify(tasks));
+      localStorage.setItem("gantt_schedule_sample_project_plan", JSON.stringify(tasks));
 
       // If server is connected, save directly to Excel on disk!
       if (serverSyncEnabled) {
@@ -4660,7 +1652,7 @@
           if (res.ok) {
             const data = await res.json();
             lastKnownServerMtime = data.mtime;
-            showToast("Saved to SMTP_TCRS_Schedule.xlsx on disk!");
+            showToast("Saved to the schedule on disk!");
             return;
           }
         } catch(e) {
@@ -4829,7 +1821,7 @@
       document.getElementById("btn-show-baseline").addEventListener("click", () => {
         if (showingBaselineTimeline) {
           showingBaselineTimeline = false;
-          const saved = localStorage.getItem("smtp_tcrs_schedule_data");
+          const saved = localStorage.getItem("gantt_schedule_sample_project_plan");
           if (saved) {
             try {
               tasks = JSON.parse(saved);
@@ -4982,7 +1974,7 @@
 
         // Project badge dot
         const dot = document.createElement("span");
-        dot.style.cssText = `width:6px; height:6px; border-radius:50%; background:${t["Project"] === "SMTP" ? "var(--primary-smtp)" : "var(--primary-tcrs)"}; flex-shrink:0;`;
+        dot.style.cssText = "width:6px; height:6px; border-radius:50%; background:#176b58; flex-shrink:0;";
         nameWrapper.appendChild(dot);
 
         // Name text (strictly contained with ellipsis and full title tooltip)
@@ -5110,14 +2102,13 @@
           } else {
             // Render Bar
             const bar = document.createElement("div");
-            const projClass = t["Project"] === "SMTP" ? "task-bar-smtp" : "task-bar-tcrs";
-            bar.className = `gantt-bar ${isDeliverable ? "deliverable-bar" : projClass} ${isParent ? "parent-summary-bar" : ""}`;
+            bar.className = `gantt-bar ${isDeliverable ? "deliverable-bar" : "task-bar-default"} ${isParent ? "parent-summary-bar" : ""}`;
             bar.style.left = `${left}px`;
             bar.style.width = `${width}px`;
 
             if (!isParent) {
               const icon = isDeliverable ? "📦 " : "";
-              bar.innerHTML = `<span style="overflow:hidden; text-overflow:ellipsis;">${icon}${t["Task Name"]}</span>`;
+              bar.innerHTML = `<span style="overflow:hidden; text-overflow:ellipsis;">${icon}${escapeHtml(t["Task Name"])}</span>`;
 
               // Resize handles
               const hLeft = document.createElement("div");
@@ -5317,16 +2308,20 @@
 
     // Tooltip handling
     const tooltip = document.getElementById("gantt-tooltip");
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    }
+
     function attachTooltip(el, task) {
       el.addEventListener("mouseenter", (e) => {
         tooltip.innerHTML = `
-          <h4>${task["Task Name"]}</h4>
-          <div class="meta-line"><span>Project: <strong>${task["Project"]}</strong></span><span>WBS: <strong>${task["WBS"] || "-"}</strong></span></div>
-          <div class="meta-line"><span>Type: <strong>${task["Task Type"]}</strong></span><span>Status: <strong>${task["Status"]}</strong></span></div>
-          <div class="meta-line"><span>Start: ${task["Start Date"] || "Not set"}</span><span>Due: ${task["Due Date"] || "Not set"}</span></div>
-          ${task["Assignees"] ? `<div class="meta-line"><span>Assignee: <strong>${task["Assignees"]}</strong></span></div>` : ""}
-          ${task["Tags"] ? `<div class="meta-line"><span>Order / Tags: <strong>${task["Tags"]}</strong></span></div>` : ""}
-          ${task["Description"] ? `<div class="desc-line">${task["Description"]}</div>` : ""}
+          <h4>${escapeHtml(task["Task Name"])}</h4>
+          <div class="meta-line"><span>Project: <strong>${escapeHtml(task["Project"])}</strong></span><span>WBS: <strong>${escapeHtml(task["WBS"] || "-")}</strong></span></div>
+          <div class="meta-line"><span>Type: <strong>${escapeHtml(task["Task Type"])}</strong></span><span>Status: <strong>${escapeHtml(task["Status"])}</strong></span></div>
+          <div class="meta-line"><span>Start: ${escapeHtml(task["Start Date"] || "Not set")}</span><span>Due: ${escapeHtml(task["Due Date"] || "Not set")}</span></div>
+          ${task["Assignees"] ? `<div class="meta-line"><span>Assignee: <strong>${escapeHtml(task["Assignees"])}</strong></span></div>` : ""}
+          ${task["Tags"] ? `<div class="meta-line"><span>Order / Tags: <strong>${escapeHtml(task["Tags"])}</strong></span></div>` : ""}
+          ${task["Description"] ? `<div class="desc-line">${escapeHtml(task["Description"])}</div>` : ""}
         `;
         tooltip.style.display = "block";
         positionTooltip(e);
@@ -5373,11 +2368,11 @@
 
     function rebuildWbsAndSortTasks() {
       const originalOrder = new Map(tasks.map((task, index) => [getTaskId(task), index]));
-      const projects = [...new Set(tasks.map(task => task["Project"] || "SMTP"))];
+      const projects = [...new Set(tasks.map(task => task["Project"] || "Sample Project Plan"))];
       const orderedTasks = [];
 
       projects.forEach(project => {
-        const projectTasks = tasks.filter(task => (task["Project"] || "SMTP") === project);
+        const projectTasks = tasks.filter(task => (task["Project"] || "Sample Project Plan") === project);
         const projectIds = new Set(projectTasks.map(getTaskId));
         const children = new Map();
         projectTasks.forEach(task => {
@@ -5439,7 +2434,7 @@
         : '<option value="">Select an existing Task (x.x) or Subtask (x.x.x)</option>';
 
       const eligibleParents = tasks.filter(t => {
-        const tProj = t["Project"] || "SMTP";
+        const tProj = t["Project"] || "Sample Project Plan";
         if (tProj !== project) return false;
         const taskId = getTaskId(t);
         if (taskId === currentTaskId || (currentTaskId && isTaskDescendant(taskId, currentTaskId))) return false;
@@ -5467,7 +2462,7 @@
         // Edit existing
         const task = tasks.find(t => (t["Task ID"] || t.id) === tid);
         if (!task) return;
-        const project = task["Project"] || "SMTP";
+        const project = task["Project"] || "Sample Project Plan";
         document.getElementById("modal-title").textContent = "Edit Task Details";
         document.getElementById("edit-task-id").value = tid;
         document.getElementById("edit-project").value = project;
@@ -5484,7 +2479,7 @@
         document.getElementById("btn-delete-task").style.display = "inline-flex";
       } else {
         // Create new
-        const defaultProject = activeProject === "ALL" ? "SMTP" : activeProject;
+        const defaultProject = activeProject === "ALL" ? "Sample Project Plan" : activeProject;
         document.getElementById("modal-title").textContent = "Add New Schedule Item";
         document.getElementById("edit-task-id").value = "";
         document.getElementById("edit-project").value = defaultProject;
@@ -5519,7 +2514,7 @@
       }
 
       if (!tid) {
-        const parent = tasks.find(task => getTaskId(task) === parentId && (task["Project"] || "SMTP") === project);
+        const parent = tasks.find(task => getTaskId(task) === parentId && (task["Project"] || "Sample Project Plan") === project);
         const level = parent && (Number(parent["Level"]) || String(parent["WBS"] || "").split(".").filter(Boolean).length);
         if (!parent || (level !== 2 && level !== 3)) {
           alert("Select an existing Task (x.x) or Subtask (x.x.x) to assign this item under.");
@@ -5604,9 +2599,9 @@
           item.style.cssText = "display:flex; align-items:center; justify-content:space-between; padding:8px 12px; border-bottom:1px solid #e2e8f0; font-size:12.5px;";
           item.innerHTML = `
             <div>
-              <span class="badge badge-${t["Project"].toLowerCase()}" style="margin-right:6px;">${t["Project"]}</span>
-              <strong>${t["Task Name"]}</strong>
-              <div style="font-size:11px; color:#64748b;">${t["Task Type"]} • ${t["Status"]}</div>
+              <span class="badge badge-${escapeHtml(String(t["Project"] || "").toLowerCase())}" style="margin-right:6px;">${escapeHtml(t["Project"])}</span>
+              <strong>${escapeHtml(t["Task Name"])}</strong>
+              <div style="font-size:11px; color:#64748b;">${escapeHtml(t["Task Type"])} • ${escapeHtml(t["Status"])}</div>
             </div>
             <button class="btn btn-primary" style="padding:4px 8px; font-size:11.5px;">Schedule Dates</button>
           `;
@@ -5747,7 +2742,7 @@
 
             // Map rows to task structure
             const newTasks = rows.map((r, i) => ({
-              "Project": r["Project"] || "SMTP",
+              "Project": r["Project"] || "Sample Project Plan",
               "WBS": r["WBS"] || `${i+1}`,
               "Task Name": String(r["Task Name"] || "").trim(),
               "Task Type": r["Task Type"] || "Task",
@@ -5805,7 +2800,7 @@
         });
 
         newTasks.push({
-          "Project": row["List Name"] && row["List Name"].includes("TCRS") ? "TCRS" : (row["Project"] || "SMTP"),
+          "Project": row["Project"] || "Sample Project Plan",
           "Task ID": row["Task ID"] || `task_${i}`,
           "Parent ID": row["Parent ID"] || "",
           "Task Name": row["Task Name"] || "",
@@ -5868,18 +2863,16 @@
       const wsAll = XLSX.utils.json_to_sheet(formatSheetData(tasks));
       XLSX.utils.book_append_sheet(wb, wsAll, "All Tasks (Master)");
 
-      // 2. SMTP sheet
-      const smtpList = tasks.filter(t => t["Project"] === "SMTP");
-      const wsSmtp = XLSX.utils.json_to_sheet(formatSheetData(smtpList));
-      XLSX.utils.book_append_sheet(wb, wsSmtp, "SMTP Tasks");
+      // Add one worksheet per project so the export matches the current schedule.
+      [...new Set(tasks.map(t => t["Project"]).filter(Boolean))].forEach(project => {{
+        const sheetName = `${project} Tasks`.slice(0, 31);
+        const projectTasks = tasks.filter(t => t["Project"] === project);
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(formatSheetData(projectTasks)), sheetName);
+      }});
 
-      // 3. TCRS sheet
-      const tcrsList = tasks.filter(t => t["Project"] === "TCRS");
-      const wsTcrs = XLSX.utils.json_to_sheet(formatSheetData(tcrsList));
-      XLSX.utils.book_append_sheet(wb, wsTcrs, "TCRS Tasks");
-
-      XLSX.writeFile(wb, "SMTP_TCRS_Schedule_Updated.xlsx");
-      showToast("Downloaded SMTP_TCRS_Schedule_Updated.xlsx!");
+      const exportFilename = "Sample_Project_Plan" + "_Schedule_Updated.xlsx";
+      XLSX.writeFile(wb, exportFilename);
+      showToast(`Downloaded ${exportFilename}!`);
     }
 
     // Export to CSV
@@ -5913,9 +2906,9 @@
       const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = "SMTP_TCRS_Schedule_Updated.csv";
+      link.download = "Sample_Project_Plan" + "_Schedule_Updated.csv";
       link.click();
-      showToast("Downloaded SMTP_TCRS_Schedule_Updated.csv!");
+      showToast(`Downloaded ${link.download}!`);
     }
 
     // Toast Notification helper

@@ -1,15 +1,45 @@
+import html
 import json
 import os
+import re
+from datetime import date, timedelta
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 json_path = os.path.join(base_dir, "schedule_data.json")
 html_path = os.path.join(base_dir, "index.html")
 
 with open(json_path, "r", encoding="utf-8") as f:
-    tasks = json.load(f)
+  schedule = json.load(f)
 
-smtp_count = sum(1 for t in tasks if t["Project"] == "SMTP")
-tcrs_count = sum(1 for t in tasks if t["Project"] == "TCRS")
+if isinstance(schedule, dict):
+  metadata = schedule.get("metadata", {})
+  tasks = schedule.get("tasks", [])
+else:
+  metadata = {}
+  tasks = schedule
+
+project_name = metadata.get("projectName", "Sample Project Plan")
+client_name = metadata.get("clientName", "Example Client")
+timeline_start = metadata.get("startDate") or min((t.get("Start Date") for t in tasks if t.get("Start Date")), default="2026-04-15")
+timeline_end = metadata.get("endDate") or max((t.get("Due Date") for t in tasks if t.get("Due Date")), default="2028-01-15")
+timeline_end_display = timeline_end
+timeline_end = (date.fromisoformat(timeline_end) + timedelta(days=1)).isoformat()
+projects = list(dict.fromkeys(t.get("Project", project_name) for t in tasks)) or [project_name]
+project_tabs_html = "".join(
+  f'<button class="tab-btn" data-project="{html.escape(project, quote=True)}">{html.escape(project)} ({sum(1 for t in tasks if t.get("Project") == project)})</button>'
+  for project in projects
+)
+project_options_html = "".join(
+  f'<option value="{html.escape(project, quote=True)}">{html.escape(project)}</option>'
+  for project in projects
+)
+project_name_html = html.escape(project_name)
+client_name_html = html.escape(client_name)
+title_html = html.escape(f"{project_name} | Interactive Gantt Chart")
+storage_key = "gantt_schedule_" + re.sub(r"[^a-z0-9]+", "_", project_name.lower()).strip("_")
+default_project_json = json.dumps(projects[0])
+export_base_json = json.dumps(re.sub(r"[^a-zA-Z0-9_-]+", "_", project_name).strip("_") or "Project")
+
 total_count = len(tasks)
 
 json_tasks_str = json.dumps(tasks, indent=2)
@@ -19,15 +49,11 @@ html_content = f'''<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WSDOT SMTP & TCRS Interactive Project Gantt</title>
+  <title>{title_html}</title>
   <!-- Load SheetJS for Excel .xlsx read and write -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
     :root {{
-      --primary-smtp: #0284c7;
-      --primary-smtp-dark: #0369a1;
-      --primary-tcrs: #059669;
-      --primary-tcrs-dark: #047857;
       --bg-dark: #0f172a;
       --bg-header: #1e293b;
       --bg-surface: #ffffff;
@@ -144,22 +170,6 @@ html_content = f'''<!DOCTYPE html>
       background: #1d4ed8;
     }}
 
-    .btn-smtp {{
-      background: #0284c7;
-      color: #fff;
-    }}
-    .btn-smtp:hover {{
-      background: #0369a1;
-    }}
-
-    .btn-tcrs {{
-      background: #059669;
-      color: #fff;
-    }}
-    .btn-tcrs:hover {{
-      background: #047857;
-    }}
-
     .btn-outline {{
       background: rgba(255,255,255,0.08);
       color: #f1f5f9;
@@ -220,16 +230,6 @@ html_content = f'''<!DOCTYPE html>
       background: #ffffff;
       color: #0f172a;
       box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-    }}
-
-    .tab-btn.active[data-project="SMTP"] {{
-      background: #38bdf8;
-      color: #0c4a6e;
-    }}
-
-    .tab-btn.active[data-project="TCRS"] {{
-      background: #34d399;
-      color: #064e3b;
     }}
 
     /* Sub Toolbar */
@@ -603,18 +603,6 @@ html_content = f'''<!DOCTYPE html>
       line-height: 1.3;
     }}
 
-    .badge-smtp {{
-      background: #e0f2fe;
-      color: #0369a1;
-      border: 1px solid #bae6fd;
-    }}
-
-    .badge-tcrs {{
-      background: #dcfce7;
-      color: #15803d;
-      border: 1px solid #bbf7d0;
-    }}
-
     .badge-complete {{
       background: var(--status-complete-bg);
       color: #065f46;
@@ -813,15 +801,9 @@ html_content = f'''<!DOCTYPE html>
       z-index: 9;
     }}
 
-    /* Type Specific Bar Styles */
-    .gantt-bar.task-bar-smtp {{
-      background: linear-gradient(135deg, #0284c7, #0369a1);
-      border: 1px solid #0284c7;
-    }}
-
-    .gantt-bar.task-bar-tcrs {{
-      background: linear-gradient(135deg, #059669, #047857);
-      border: 1px solid #059669;
+    .gantt-bar.task-bar-default {{
+      background: linear-gradient(135deg, #176b58, #10513f);
+      border: 1px solid #176b58;
     }}
 
     .gantt-bar.deliverable-bar {{
@@ -836,12 +818,8 @@ html_content = f'''<!DOCTYPE html>
       border-radius: 3px;
     }}
 
-    .gantt-bar.parent-summary-bar.task-bar-smtp {{
-      background: #06537d;
-    }}
-
-    .gantt-bar.parent-summary-bar.task-bar-tcrs {{
-      background: #33957f;
+    .gantt-bar.parent-summary-bar.task-bar-default {{
+      background: #10513f;
     }}
 
     /* Milestone Diamond */
@@ -1188,18 +1166,17 @@ html_content = f'''<!DOCTYPE html>
   <!-- Top App Header -->
   <header class="app-header">
     <div class="header-branding">
-      <div class="logo-badge">WSDOT</div>
+      <div class="logo-badge">GANTT</div>
       <div class="header-title-box">
-        <h1>SMTP & TCRS Project Schedule Gantt</h1>
-        <p>Statewide Multimodal Transportation Plan (SMTP) & Transportation Carbon Reduction Strategy (TCRS)</p>
+        <h1>{project_name_html}</h1>
+        <p>{client_name_html} · {timeline_start[:10]} to {timeline_end_display[:10]}</p>
       </div>
     </div>
 
     <!-- Project Tabs -->
     <div class="project-tabs">
-      <button class="tab-btn active" data-project="ALL">🌐 All Projects ({total_count})</button>
-      <button class="tab-btn" data-project="SMTP">🔵 SMTP ({smtp_count})</button>
-      <button class="tab-btn" data-project="TCRS">🟢 TCRS ({tcrs_count})</button>
+      <button class="tab-btn active" data-project="ALL">All Tasks ({total_count})</button>
+      {project_tabs_html}
     </div>
 
     <!-- Global Actions -->
@@ -1351,8 +1328,7 @@ html_content = f'''<!DOCTYPE html>
           <div class="form-group" style="flex:1;">
             <label>Project</label>
             <select class="form-control" id="edit-project">
-              <option value="SMTP">SMTP (Statewide Multimodal)</option>
-              <option value="TCRS">TCRS (Carbon Reduction)</option>
+              {project_options_html}
             </select>
           </div>
           <div class="form-group" style="flex:1;">
@@ -1455,7 +1431,7 @@ html_content = f'''<!DOCTYPE html>
   <!-- Drag & Drop Overlay -->
   <div class="dropzone-overlay" id="dropzone-overlay">
     <div>📥 Drop Excel (.xlsx) or CSV file here to update schedule!</div>
-    <div style="font-size:14px; font-weight:400; opacity:0.9;">Both SMTP and TCRS tasks will automatically sync</div>
+    <div style="font-size:14px; font-weight:400; opacity:0.9;">Imported schedule data replaces the current task list</div>
   </div>
 
   <script>
@@ -1465,7 +1441,7 @@ html_content = f'''<!DOCTYPE html>
     // State
     let tasks = [];
     let showingBaselineTimeline = false;
-    let activeProject = "ALL"; // "ALL", "SMTP", "TCRS"
+    let activeProject = "ALL";
     let currentZoom = "month"; // "quarter", "month", "week"
     let collapsedSet = new Set(); // set of parent Task IDs currently collapsed
     let selectedTaskId = null;
@@ -1487,8 +1463,8 @@ html_content = f'''<!DOCTYPE html>
     }};
 
     // Project timeline bounds: May 1, 2026 to Dec 31, 2027
-    const TIMELINE_START = new Date("2026-04-15T00:00:00");
-    const TIMELINE_END = new Date("2028-01-15T00:00:00");
+    const TIMELINE_START = new Date("{timeline_start}T00:00:00");
+    const TIMELINE_END = new Date("{timeline_end}T00:00:00");
     const TODAY = new Date(); // Tracks the actual current date
 
     // Initialize application
@@ -1542,7 +1518,7 @@ html_content = f'''<!DOCTYPE html>
             tasks = data.tasks;
             lastKnownServerMtime = data.mtime;
             render();
-            showToast("Synced with SMTP_TCRS_Schedule.xlsx on disk!");
+            showToast("Synced with the schedule on disk!");
           }}
         }}
       }} catch (err) {{
@@ -1567,7 +1543,7 @@ html_content = f'''<!DOCTYPE html>
 
     // Load tasks from localStorage or baseline
     function loadSavedTasks() {{
-      const saved = localStorage.getItem("smtp_tcrs_schedule_data");
+      const saved = localStorage.getItem("{storage_key}");
       if (saved) {{
         try {{
           tasks = JSON.parse(saved);
@@ -1582,7 +1558,7 @@ html_content = f'''<!DOCTYPE html>
 
     async function saveTasks() {{
       // Always save to browser localStorage
-      localStorage.setItem("smtp_tcrs_schedule_data", JSON.stringify(tasks));
+      localStorage.setItem("{storage_key}", JSON.stringify(tasks));
       
       // If server is connected, save directly to Excel on disk!
       if (serverSyncEnabled) {{
@@ -1595,7 +1571,7 @@ html_content = f'''<!DOCTYPE html>
           if (res.ok) {{
             const data = await res.json();
             lastKnownServerMtime = data.mtime;
-            showToast("Saved to SMTP_TCRS_Schedule.xlsx on disk!");
+            showToast("Saved to the schedule on disk!");
             return;
           }}
         }} catch(e) {{
@@ -1764,7 +1740,7 @@ html_content = f'''<!DOCTYPE html>
       document.getElementById("btn-show-baseline").addEventListener("click", () => {{
         if (showingBaselineTimeline) {{
           showingBaselineTimeline = false;
-          const saved = localStorage.getItem("smtp_tcrs_schedule_data");
+          const saved = localStorage.getItem("{storage_key}");
           if (saved) {{
             try {{
               tasks = JSON.parse(saved);
@@ -1917,7 +1893,7 @@ html_content = f'''<!DOCTYPE html>
 
         // Project badge dot
         const dot = document.createElement("span");
-        dot.style.cssText = `width:6px; height:6px; border-radius:50%; background:${{t["Project"] === "SMTP" ? "var(--primary-smtp)" : "var(--primary-tcrs)"}}; flex-shrink:0;`;
+        dot.style.cssText = "width:6px; height:6px; border-radius:50%; background:#176b58; flex-shrink:0;";
         nameWrapper.appendChild(dot);
 
         // Name text (strictly contained with ellipsis and full title tooltip)
@@ -2045,14 +2021,13 @@ html_content = f'''<!DOCTYPE html>
           }} else {{
             // Render Bar
             const bar = document.createElement("div");
-            const projClass = t["Project"] === "SMTP" ? "task-bar-smtp" : "task-bar-tcrs";
-            bar.className = `gantt-bar ${{isDeliverable ? "deliverable-bar" : projClass}} ${{isParent ? "parent-summary-bar" : ""}}`;
+            bar.className = `gantt-bar ${{isDeliverable ? "deliverable-bar" : "task-bar-default"}} ${{isParent ? "parent-summary-bar" : ""}}`;
             bar.style.left = `${{left}}px`;
             bar.style.width = `${{width}}px`;
 
             if (!isParent) {{
               const icon = isDeliverable ? "📦 " : "";
-              bar.innerHTML = `<span style="overflow:hidden; text-overflow:ellipsis;">${{icon}}${{t["Task Name"]}}</span>`;
+              bar.innerHTML = `<span style="overflow:hidden; text-overflow:ellipsis;">${{icon}}${{escapeHtml(t["Task Name"])}}</span>`;
 
               // Resize handles
               const hLeft = document.createElement("div");
@@ -2252,16 +2227,20 @@ html_content = f'''<!DOCTYPE html>
 
     // Tooltip handling
     const tooltip = document.getElementById("gantt-tooltip");
+    function escapeHtml(value) {{
+      return String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;").replace(/'/g, "&#39;");
+    }}
+
     function attachTooltip(el, task) {{
       el.addEventListener("mouseenter", (e) => {{
         tooltip.innerHTML = `
-          <h4>${{task["Task Name"]}}</h4>
-          <div class="meta-line"><span>Project: <strong>${{task["Project"]}}</strong></span><span>WBS: <strong>${{task["WBS"] || "-"}}</strong></span></div>
-          <div class="meta-line"><span>Type: <strong>${{task["Task Type"]}}</strong></span><span>Status: <strong>${{task["Status"]}}</strong></span></div>
-          <div class="meta-line"><span>Start: ${{task["Start Date"] || "Not set"}}</span><span>Due: ${{task["Due Date"] || "Not set"}}</span></div>
-          ${{task["Assignees"] ? `<div class="meta-line"><span>Assignee: <strong>${{task["Assignees"]}}</strong></span></div>` : ""}}
-          ${{task["Tags"] ? `<div class="meta-line"><span>Order / Tags: <strong>${{task["Tags"]}}</strong></span></div>` : ""}}
-          ${{task["Description"] ? `<div class="desc-line">${{task["Description"]}}</div>` : ""}}
+          <h4>${{escapeHtml(task["Task Name"])}}</h4>
+          <div class="meta-line"><span>Project: <strong>${{escapeHtml(task["Project"])}}</strong></span><span>WBS: <strong>${{escapeHtml(task["WBS"] || "-")}}</strong></span></div>
+          <div class="meta-line"><span>Type: <strong>${{escapeHtml(task["Task Type"])}}</strong></span><span>Status: <strong>${{escapeHtml(task["Status"])}}</strong></span></div>
+          <div class="meta-line"><span>Start: ${{escapeHtml(task["Start Date"] || "Not set")}}</span><span>Due: ${{escapeHtml(task["Due Date"] || "Not set")}}</span></div>
+          ${{task["Assignees"] ? `<div class="meta-line"><span>Assignee: <strong>${{escapeHtml(task["Assignees"])}}</strong></span></div>` : ""}}
+          ${{task["Tags"] ? `<div class="meta-line"><span>Order / Tags: <strong>${{escapeHtml(task["Tags"])}}</strong></span></div>` : ""}}
+          ${{task["Description"] ? `<div class="desc-line">${{escapeHtml(task["Description"])}}</div>` : ""}}
         `;
         tooltip.style.display = "block";
         positionTooltip(e);
@@ -2308,11 +2287,11 @@ html_content = f'''<!DOCTYPE html>
 
     function rebuildWbsAndSortTasks() {{
       const originalOrder = new Map(tasks.map((task, index) => [getTaskId(task), index]));
-      const projects = [...new Set(tasks.map(task => task["Project"] || "SMTP"))];
+      const projects = [...new Set(tasks.map(task => task["Project"] || {default_project_json}))];
       const orderedTasks = [];
 
       projects.forEach(project => {{
-        const projectTasks = tasks.filter(task => (task["Project"] || "SMTP") === project);
+        const projectTasks = tasks.filter(task => (task["Project"] || {default_project_json}) === project);
         const projectIds = new Set(projectTasks.map(getTaskId));
         const children = new Map();
         projectTasks.forEach(task => {{
@@ -2374,7 +2353,7 @@ html_content = f'''<!DOCTYPE html>
         : '<option value="">Select an existing Task (x.x) or Subtask (x.x.x)</option>';
 
       const eligibleParents = tasks.filter(t => {{
-        const tProj = t["Project"] || "SMTP";
+        const tProj = t["Project"] || {default_project_json};
         if (tProj !== project) return false;
         const taskId = getTaskId(t);
         if (taskId === currentTaskId || (currentTaskId && isTaskDescendant(taskId, currentTaskId))) return false;
@@ -2402,7 +2381,7 @@ html_content = f'''<!DOCTYPE html>
         // Edit existing
         const task = tasks.find(t => (t["Task ID"] || t.id) === tid);
         if (!task) return;
-        const project = task["Project"] || "SMTP";
+        const project = task["Project"] || {default_project_json};
         document.getElementById("modal-title").textContent = "Edit Task Details";
         document.getElementById("edit-task-id").value = tid;
         document.getElementById("edit-project").value = project;
@@ -2419,7 +2398,7 @@ html_content = f'''<!DOCTYPE html>
         document.getElementById("btn-delete-task").style.display = "inline-flex";
       }} else {{
         // Create new
-        const defaultProject = activeProject === "ALL" ? "SMTP" : activeProject;
+        const defaultProject = activeProject === "ALL" ? {default_project_json} : activeProject;
         document.getElementById("modal-title").textContent = "Add New Schedule Item";
         document.getElementById("edit-task-id").value = "";
         document.getElementById("edit-project").value = defaultProject;
@@ -2454,7 +2433,7 @@ html_content = f'''<!DOCTYPE html>
       }}
 
       if (!tid) {{
-        const parent = tasks.find(task => getTaskId(task) === parentId && (task["Project"] || "SMTP") === project);
+        const parent = tasks.find(task => getTaskId(task) === parentId && (task["Project"] || {default_project_json}) === project);
         const level = parent && (Number(parent["Level"]) || String(parent["WBS"] || "").split(".").filter(Boolean).length);
         if (!parent || (level !== 2 && level !== 3)) {{
           alert("Select an existing Task (x.x) or Subtask (x.x.x) to assign this item under.");
@@ -2539,9 +2518,9 @@ html_content = f'''<!DOCTYPE html>
           item.style.cssText = "display:flex; align-items:center; justify-content:space-between; padding:8px 12px; border-bottom:1px solid #e2e8f0; font-size:12.5px;";
           item.innerHTML = `
             <div>
-              <span class="badge badge-${{t["Project"].toLowerCase()}}" style="margin-right:6px;">${{t["Project"]}}</span>
-              <strong>${{t["Task Name"]}}</strong>
-              <div style="font-size:11px; color:#64748b;">${{t["Task Type"]}} • ${{t["Status"]}}</div>
+              <span class="badge badge-${{escapeHtml(String(t["Project"] || "").toLowerCase())}}" style="margin-right:6px;">${{escapeHtml(t["Project"])}}</span>
+              <strong>${{escapeHtml(t["Task Name"])}}</strong>
+              <div style="font-size:11px; color:#64748b;">${{escapeHtml(t["Task Type"])}} • ${{escapeHtml(t["Status"])}}</div>
             </div>
             <button class="btn btn-primary" style="padding:4px 8px; font-size:11.5px;">Schedule Dates</button>
           `;
@@ -2682,7 +2661,7 @@ html_content = f'''<!DOCTYPE html>
             
             // Map rows to task structure
             const newTasks = rows.map((r, i) => ({{
-              "Project": r["Project"] || "SMTP",
+              "Project": r["Project"] || {default_project_json},
               "WBS": r["WBS"] || `${{i+1}}`,
               "Task Name": String(r["Task Name"] || "").trim(),
               "Task Type": r["Task Type"] || "Task",
@@ -2740,7 +2719,7 @@ html_content = f'''<!DOCTYPE html>
         }});
 
         newTasks.push({{
-          "Project": row["List Name"] && row["List Name"].includes("TCRS") ? "TCRS" : (row["Project"] || "SMTP"),
+          "Project": row["Project"] || {default_project_json},
           "Task ID": row["Task ID"] || `task_${{i}}`,
           "Parent ID": row["Parent ID"] || "",
           "Task Name": row["Task Name"] || "",
@@ -2803,18 +2782,16 @@ html_content = f'''<!DOCTYPE html>
       const wsAll = XLSX.utils.json_to_sheet(formatSheetData(tasks));
       XLSX.utils.book_append_sheet(wb, wsAll, "All Tasks (Master)");
 
-      // 2. SMTP sheet
-      const smtpList = tasks.filter(t => t["Project"] === "SMTP");
-      const wsSmtp = XLSX.utils.json_to_sheet(formatSheetData(smtpList));
-      XLSX.utils.book_append_sheet(wb, wsSmtp, "SMTP Tasks");
+      // Add one worksheet per project so the export matches the current schedule.
+      [...new Set(tasks.map(t => t["Project"]).filter(Boolean))].forEach(project => {{{{
+        const sheetName = `${{project}} Tasks`.slice(0, 31);
+        const projectTasks = tasks.filter(t => t["Project"] === project);
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(formatSheetData(projectTasks)), sheetName);
+      }}}});
 
-      // 3. TCRS sheet
-      const tcrsList = tasks.filter(t => t["Project"] === "TCRS");
-      const wsTcrs = XLSX.utils.json_to_sheet(formatSheetData(tcrsList));
-      XLSX.utils.book_append_sheet(wb, wsTcrs, "TCRS Tasks");
-
-      XLSX.writeFile(wb, "SMTP_TCRS_Schedule_Updated.xlsx");
-      showToast("Downloaded SMTP_TCRS_Schedule_Updated.xlsx!");
+      const exportFilename = {export_base_json} + "_Schedule_Updated.xlsx";
+      XLSX.writeFile(wb, exportFilename);
+      showToast(`Downloaded ${{exportFilename}}!`);
     }}
 
     // Export to CSV
@@ -2848,9 +2825,9 @@ html_content = f'''<!DOCTYPE html>
       const blob = new Blob([csv], {{ type: "text/csv;charset=utf-8;" }});
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = "SMTP_TCRS_Schedule_Updated.csv";
+      link.download = {export_base_json} + "_Schedule_Updated.csv";
       link.click();
-      showToast("Downloaded SMTP_TCRS_Schedule_Updated.csv!");
+      showToast(`Downloaded ${{link.download}}!`);
     }}
 
     // Toast Notification helper
