@@ -73,7 +73,7 @@
     }
 
     .logo-badge {
-      background: var(--brand-primary);
+      /* background: var(--brand-primary); */
       color: white;
       font-weight: 800;
       font-size: 16px;
@@ -103,7 +103,7 @@
 
     .header-title-box p {
       font-size: 12px;
-      color: #94a3b8;
+      color: #fff
     }
 
     .header-controls {
@@ -1134,14 +1134,13 @@
       <div class="logo-badge">Transit Feasibility Study</div>
       <div class="header-title-box">
         <h1>OC TFS</h1>
-        <p> · 2026-05-07 to 2028-08-18</p>
+        <p> 2026-05-07 to 2028-08-18</p>
       </div>
     </div>
 
     <!-- Project Tabs -->
     <div class="project-tabs">
-      <button class="tab-btn active" data-project="ALL">All Tasks (149)</button>
-      <button class="tab-btn" data-project="OC TFS">OC TFS (149)</button>
+      <button class="tab-btn active" data-project="OC TFS">OC TFS (149)</button>
     </div>
 
     <!-- Global Actions -->
@@ -4089,7 +4088,7 @@
     // State
     let tasks = [];
     let showingBaselineTimeline = false;
-    let activeProject = "ALL";
+    let activeProject = "OC TFS";
     let currentZoom = "month"; // "quarter", "month", "week"
     let collapsedSet = new Set(); // set of parent Task IDs currently collapsed
     let selectedTaskId = null;
