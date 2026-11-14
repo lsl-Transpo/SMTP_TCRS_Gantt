@@ -18,31 +18,8 @@ else:
   metadata = {}
   tasks = schedule
 
-design = metadata.get("design", {})
 project_name = metadata.get("projectName", "Sample Project Plan")
 client_name = metadata.get("clientName", "Example Client")
-primary_color = design.get("primaryColor", "#176b58")
-accent_color = design.get("accentColor", "#c85e43")
-if not re.fullmatch(r"#[0-9a-fA-F]{6}", primary_color):
-  primary_color = "#176b58"
-if not re.fullmatch(r"#[0-9a-fA-F]{6}", accent_color):
-  accent_color = "#c85e43"
-allowed_fonts = {"Georgia", "Aptos", "Trebuchet MS", "Arial", "Verdana"}
-heading_font = design.get("headingFont", "Georgia")
-body_font = design.get("bodyFont", "Aptos")
-if heading_font not in allowed_fonts:
-  heading_font = "Georgia"
-if body_font not in allowed_fonts:
-  body_font = "Aptos"
-logo_data = design.get("logo", "")
-if not isinstance(logo_data, str) or not re.fullmatch(r"data:image/(?:png|jpeg|webp);base64,[A-Za-z0-9+/]+={0,2}", logo_data):
-  logo_data = ""
-logo_html = (
-  f'<img class="project-logo" src="{html.escape(logo_data, quote=True)}" alt="Project logo">'
-  if logo_data else '<div class="logo-badge">PLAN</div>'
-)
-heading_font_css = json.dumps(heading_font)
-body_font_css = json.dumps(body_font)
 timeline_start = metadata.get("startDate") or min((t.get("Start Date") for t in tasks if t.get("Start Date")), default="2026-04-15")
 timeline_end = metadata.get("endDate") or max((t.get("Due Date") for t in tasks if t.get("Due Date")), default="2028-01-15")
 timeline_end_display = timeline_end
@@ -77,10 +54,8 @@ html_content = f'''<!DOCTYPE html>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
     :root {{
-      --brand-primary: {primary_color};
-      --brand-accent: {accent_color};
       --bg-dark: #0f172a;
-      --bg-header: var(--brand-primary);
+      --bg-header: #1e293b;
       --bg-surface: #ffffff;
       --bg-subtle: #f8fafc;
       --bg-muted: #f1f5f9;
@@ -112,7 +87,7 @@ html_content = f'''<!DOCTYPE html>
     }}
 
     body {{
-      font-family: {body_font_css}, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background: var(--bg-subtle);
       color: var(--text-main);
       height: 100vh;
@@ -142,7 +117,7 @@ html_content = f'''<!DOCTYPE html>
     }}
 
     .logo-badge {{
-      background: var(--brand-primary);
+      background: linear-gradient(135deg, #0284c7, #059669);
       color: white;
       font-weight: 800;
       font-size: 16px;
@@ -152,16 +127,8 @@ html_content = f'''<!DOCTYPE html>
       box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }}
 
-    .project-logo {{
-      display: block;
-      max-width: 144px;
-      max-height: 48px;
-      object-fit: contain;
-    }}
-
     .header-title-box h1 {{
       font-size: 17px;
-      font-family: {heading_font_css}, sans-serif;
       font-weight: 700;
       letter-spacing: -0.2px;
       display: flex;
@@ -196,11 +163,11 @@ html_content = f'''<!DOCTYPE html>
     }}
 
     .btn-primary {{
-      background: var(--brand-primary);
+      background: #2563eb;
       color: #fff;
     }}
     .btn-primary:hover {{
-      background: var(--brand-accent);
+      background: #1d4ed8;
     }}
 
     .btn-outline {{
@@ -835,8 +802,8 @@ html_content = f'''<!DOCTYPE html>
     }}
 
     .gantt-bar.task-bar-default {{
-      background: var(--brand-primary);
-      border: 1px solid var(--brand-primary);
+      background: linear-gradient(135deg, #176b58, #10513f);
+      border: 1px solid #176b58;
     }}
 
     .gantt-bar.deliverable-bar {{
@@ -852,7 +819,7 @@ html_content = f'''<!DOCTYPE html>
     }}
 
     .gantt-bar.parent-summary-bar.task-bar-default {{
-      background: var(--brand-primary);
+      background: #10513f;
     }}
 
     /* Milestone Diamond */
@@ -1199,7 +1166,7 @@ html_content = f'''<!DOCTYPE html>
   <!-- Top App Header -->
   <header class="app-header">
     <div class="header-branding">
-      {logo_html}
+      <div class="logo-badge">GANTT</div>
       <div class="header-title-box">
         <h1>{project_name_html}</h1>
         <p>{client_name_html} · {timeline_start[:10]} to {timeline_end_display[:10]}</p>
@@ -1926,7 +1893,7 @@ html_content = f'''<!DOCTYPE html>
 
         // Project badge dot
         const dot = document.createElement("span");
-        dot.style.cssText = "width:6px; height:6px; border-radius:50%; background:var(--brand-primary); flex-shrink:0;";
+        dot.style.cssText = "width:6px; height:6px; border-radius:50%; background:#176b58; flex-shrink:0;";
         nameWrapper.appendChild(dot);
 
         // Name text (strictly contained with ellipsis and full title tooltip)

@@ -12,11 +12,11 @@
       --line: #d3ddda;
       --paper: #fbfcf8;
       --panel: #ffffff;
-      --green: #249739c2;
+      --green: #176b58;
       --green-dark: #10513f;
-      --mustard: #d3ad16;
+      --coral: #c85e43;
       --soft-green: #e8f1ec;
-      --focus: #c2df4e;
+      --focus: #df9b4e;
     }
 
     * { box-sizing: border-box; }
@@ -25,21 +25,21 @@
       min-height: 100vh;
       background: repeating-linear-gradient(135deg, transparent 0 23px, rgba(23,107,88,.035) 23px 24px), var(--paper);
       color: var(--ink);
-      font: 15px/1.5 "Aptos", "Segoe UI", "Arial", "Helvetica", sans-serif;
+      font: 15px/1.5 "Aptos", "Segoe UI", sans-serif;
     }
     header {
-      background:#249739c2;
+      background: var(--green-dark);
       color: #fff;
       padding: 28px max(24px, calc((100% - 1120px) / 2));
-      border-bottom: 5px solid var(--lightgray);
+      border-bottom: 5px solid var(--coral);
     }
     .eyebrow { color: #b7d8ca; font-size: 12px; font-weight: 700; text-transform: uppercase; }
-    h1 { margin: 5px 0 3px; font: 600 30px/1.15 "Aptos", "Segoe UI", "Arial", "Helvetica", sans-serif; }
+    h1 { margin: 5px 0 3px; font: 600 30px/1.15 Georgia, serif; }
     header p { margin: 0; color: #dce9e2; }
     main { width: min(1120px, calc(100% - 36px)); margin: 28px auto 60px; }
     form { background: var(--panel); border: 1px solid var(--line); border-top: 3px solid var(--green); }
     fieldset { border: 0; border-bottom: 1px solid var(--line); padding: 24px; margin: 0; }
-    legend { padding: 0; font: 600 20px "Aptos", "Segoe UI", "Arial", "Helvetica", sans-serif; }
+    legend { padding: 0; font: 600 20px Georgia, serif; }
     .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
     .field { display: grid; gap: 6px; min-width: 0; }
     .field label, .field-label { font-weight: 650; font-size: 13px; }
@@ -47,10 +47,7 @@
     input:focus, select:focus { outline: 3px solid rgba(223,155,78,.28); border-color: var(--focus); }
     .choices { display: flex; gap: 22px; flex-wrap: wrap; margin-top: 18px; }
     .choice { display: flex; align-items: center; gap: 8px; font-weight: 600; }
-    .choice input { width: 18px; min-height: 18px; accent-color: var(--mustard); }
-    .color-input { height: 42px; padding: 4px; }
-    .logo-preview { display: flex; align-items: center; min-height: 52px; }
-    .logo-preview img { max-width: 180px; max-height: 64px; object-fit: contain; }
+    .choice input { width: 18px; min-height: 18px; accent-color: var(--green); }
     .section-heading { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 16px; }
     .section-heading p { color: var(--muted); margin: 5px 0 0; font-size: 13px; }
     .task-list { display: grid; gap: 10px; }
@@ -117,44 +114,6 @@
         </div>
       </fieldset>
       <fieldset>
-        <legend>Brand and design</legend>
-        <div class="fields">
-          <div class="field">
-            <label for="brand-primary">Primary brand color</label>
-            <input id="brand-primary" class="color-input" type="color" value="#2f3f90">
-          </div>
-          <div class="field">
-            <label for="brand-accent">Accent brand color</label>
-            <input id="brand-accent" class="color-input" type="color" value="#d3ad16">
-          </div>
-          <div class="field">
-            <label for="heading-font">Heading font</label>
-            <select id="heading-font">
-              <option value="Georgia">Georgia</option>
-              <option value="Aptos">Aptos</option>
-              <option value="Trebuchet MS">Trebuchet MS</option>
-              <option value="Arial">Arial</option>
-              <option value="Verdana">Verdana</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="body-font">Body font</label>
-            <select id="body-font">
-              <option value="Aptos">Aptos</option>
-              <option value="Trebuchet MS">Trebuchet MS</option>
-              <option value="Arial">Arial</option>
-              <option value="Verdana">Verdana</option>
-              <option value="Georgia">Georgia</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="project-logo">Project logo (PNG, JPEG, or WebP; up to 2 MB)</label>
-            <input id="project-logo" type="file" accept="image/png,image/jpeg,image/webp">
-            <div class="logo-preview" id="logo-preview" aria-live="polite"></div>
-          </div>
-        </div>
-      </fieldset>
-      <fieldset>
         <div class="section-heading">
           <div>
             <legend>Tasks and milestones</legend>
@@ -175,29 +134,7 @@
     const taskList = document.getElementById("task-list");
     const subtasksToggle = document.getElementById("enable-subtasks");
     const milestonesToggle = document.getElementById("enable-milestones");
-    const logoInput = document.getElementById("project-logo");
     let nextRowId = 1;
-
-    function readLogoData(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = () => reject(new Error("The selected logo could not be read."));
-        reader.readAsDataURL(file);
-      });
-    }
-
-    logoInput.addEventListener("change", () => {
-      const preview = document.getElementById("logo-preview");
-      preview.replaceChildren();
-      const file = logoInput.files[0];
-      if (file && ["image/png", "image/jpeg", "image/webp"].includes(file.type) && file.size <= 2 * 1024 * 1024) {
-        const image = document.createElement("img");
-        image.src = URL.createObjectURL(file);
-        image.alt = "Selected project logo preview";
-        preview.appendChild(image);
-      }
-    });
 
     function taskRows() {
       return [...taskList.querySelectorAll(".task-row")];
@@ -257,7 +194,7 @@
       document.getElementById("timeline-end").min = event.target.value;
     });
 
-    document.getElementById("setup-form").addEventListener("submit", async event => {
+    document.getElementById("setup-form").addEventListener("submit", event => {
       event.preventDefault();
       const rows = taskRows();
       const start = document.getElementById("timeline-start").value;
@@ -278,11 +215,6 @@
       });
       if (hasOutOfRangeDates) {
         document.getElementById("result").textContent = "Task dates must fall within the project timeline, and task start dates cannot follow due dates.";
-        return;
-      }
-      const logoFile = logoInput.files[0];
-      if (logoFile && (!["image/png", "image/jpeg", "image/webp"].includes(logoFile.type) || logoFile.size > 2 * 1024 * 1024)) {
-        document.getElementById("result").textContent = "Choose a PNG, JPEG, or WebP logo smaller than 2 MB.";
         return;
       }
       const records = rows.map((row, index) => ({
@@ -328,26 +260,12 @@
           "Level": parent ? 2 : 1
         };
       });
-      let logo = "";
-      try {
-        if (logoFile) logo = await readLogoData(logoFile);
-      } catch (error) {
-        document.getElementById("result").textContent = error.message;
-        return;
-      }
       const schedule = {
         metadata: {
           projectName: document.getElementById("project-name").value.trim(),
           clientName: document.getElementById("client-name").value.trim(),
           startDate: start,
-          endDate: end,
-          design: {
-            primaryColor: document.getElementById("brand-primary").value,
-            accentColor: document.getElementById("brand-accent").value,
-            headingFont: document.getElementById("heading-font").value,
-            bodyFont: document.getElementById("body-font").value,
-            logo
-          }
+          endDate: end
         },
         tasks
       };
